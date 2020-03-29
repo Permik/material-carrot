@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Material Carrot</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="enter_pin">PIN</string>
+    <string name="title_activity_main">Material Carrot</string>
+    <string name="title_activity_add_profile">Add Profile</string>
+    <string name="profile_name">Profile name</string>
+    <string name="menu_add">Add profile</string>
+    <string name="menu_delete">Delete profile</string>
+    <string name="menu_about">About</string>
+    <string name="profile_enter_name">Profile name</string>
+    <string name="profile_save">Save profile</string>
+    <string name="title_activity_main2">MainActivity</string>
+    <string name="secret_here">Secret: \n</string>
+    <string name="profile_delete_confirm">Are you sure you want to delete this profile?</string>
+    <string name="profile_delete">Delete profile</string>
+    <string name="profile_delete_confirm_button">Delete</string>
+    <string name="app_about">Material Carrot is a fork of the Potato mOTP client for Android\nhttps://github.com/markusberg/potato_client\nAll credit to Markus Berg, the original developer Potato client.\nhttp://kelvin.nu/software/potato http://motp.sf.net/</string>
+
+</resources>

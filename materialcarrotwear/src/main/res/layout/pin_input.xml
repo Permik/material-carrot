@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:padding="@dimen/box_inset_layout_padding"
+    android:theme="@style/AppTheme"
+    tools:context=".MainWearActivity"
+    tools:deviceIds="wear">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5dp"
+            app:boxedEdges="all">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlinedTextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:hint="@string/enter_pin">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberPassword" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                android:id="@+id/pin_ok"
+                android:background="@null"
+                android:layout_gravity="bottom|start"
+                android:layout_height="50dp"
+                android:layout_width="50dp"
+                android:src="@drawable/ic_cc_checkmark" />
+
+            <ImageButton
+                android:id="@+id/pin_cancel"
+                android:background="@null"
+                android:layout_gravity="bottom|end"
+                android:layout_height="50dp"
+                android:layout_width="50dp"
+                android:src="@drawable/ic_cc_clear" />
+
+
+        </FrameLayout>
+</androidx.wear.widget.BoxInsetLayout>
