@@ -1,15 +1,18 @@
 package xyz.santtu.materialcarrot
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import java.util.*
 import kotlin.reflect.KProperty
 
+
 const val OTP_PASSWORD_KEY = "otpPasswordKey"
 const val COUNTDOWN_START_KEY = "countdownStartKey"
 const val SELECTED_PROFILE_KEY = "selectedProfileKey"
 const val PROFILE_LIST_KEY = "profileListKey"
+const val UTC_OFFSET_KEY = "utcOffsetKey"
 class MainScreenViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     val state = savedStateHandle
 
@@ -35,4 +38,14 @@ class MainScreenViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             return state.getLiveData(PROFILE_LIST_KEY, TreeMap<String, String>())
         }
         fun setProfileList(value: TreeMap<String, String> ): Unit = state.set(PROFILE_LIST_KEY, value)
+
+        fun getUtcOffset(): LiveData<String> {
+            val offset: LiveData<String> = state.getLiveData(UTC_OFFSET_KEY)
+            return if (offset.value.isNullOrEmpty()){
+                state.set(UTC_OFFSET_KEY, UtcOffset())
+                offset
+            }else{
+                offset
+            }
+        }
 }

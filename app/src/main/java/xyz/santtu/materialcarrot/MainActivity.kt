@@ -19,11 +19,9 @@
 </markus> */
 package xyz.santtu.materialcarrot
 
-import android.app.Dialog
 import android.content.Context
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.DialogInterface
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.*
@@ -37,14 +35,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
-import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.core.view.get
-import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.santtu.materialcarrot.databinding.ActivityMainBinding
 import xyz.santtu.materialcarrot.databinding.AddProfileBinding
@@ -52,7 +43,6 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.util.*
-import kotlin.math.abs
 
 // TODO: Add change all dialogs to fragment dialogs to preserve their states on rotate.
 
@@ -75,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
         val model: MainScreenViewModel by viewModels<MainScreenViewModel>()
         model.getOnetimePassword().observe(this, Observer { password -> binding.otpView.text = password } )
+        model.getUtcOffset().observe(this, Observer { utcOffset -> binding.utcView.text = utcOffset})
         model.getProfileList().apply{
             this.observe(this@MainActivity, Observer { profiless -> profileTree = profiless; populateProfileSpinner(model) } )
             profileTree = this.value!!
@@ -86,7 +77,6 @@ class MainActivity : AppCompatActivity() {
         populateProfileSpinner(model)
         addProfileSpinnerListener(model)
         addPinListener(model)
-        updateUtcView()
     }
 
     public override fun onStop() {
@@ -151,7 +141,13 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_add -> {
 
-                val addProfFragment = AddProfileDialogFragment(model)
+                val addProfFragment = AddProfileDialogFragment()
+                addProfFragment.callback = object : AddProfileDialogFragment.SetOnPositiveListener{
+                    override fun onAddProfile(name: String, secret: ByteArray) {
+                        model.setProfileList(profileTree.apply { this[name] = toHex(secret)})
+                        populateProfileSpinner(model)
+                    }
+                }
                 addProfFragment.show(supportFragmentManager, "AddProfile")
                 true
             }
@@ -171,7 +167,6 @@ class MainActivity : AppCompatActivity() {
                         // The button was clicked
 // Remove the currently selected profile
                         model.setProfileList(profileTree.apply { this.remove(binding.profileSelector.selectedItem) })
-                        saveProfiles()
                         clearSensitiveData()
                         populateProfileSpinner(model)
                     }
@@ -206,7 +201,7 @@ class MainActivity : AppCompatActivity() {
         prng.nextBytes(randomBytes)
         // Display secret in ui
         dialogBinding.profileSecret.text = String.format(
-            getString(R.string.secret_here)+readable(toHex(randomBytes))
+            getString(R.string.secret_here)+formatAddHexReadability(toHex(randomBytes))
         )
         dialog.show()
     }
@@ -450,80 +445,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Update the display of our current UTC offset i.e. UTC+1 or UTC-1:30
-     */
-    fun updateUtcView() {
-        val utcView = findViewById<View>(R.id.utcView) as TextView
-        val now = Calendar.getInstance()
-        var offsetMinutes = (now[Calendar.ZONE_OFFSET] + now[Calendar.DST_OFFSET]) / 60000
-        val offsetPrefix = if (offsetMinutes < 0) "-" else "+"
-        offsetMinutes = abs(offsetMinutes)
-        if (offsetMinutes % 60 == 0) {
-            utcView.text = String.format(
-                "UTC%s%d", offsetPrefix,
-                offsetMinutes / 60
-            )
-        } else {
-            utcView.text = String.format(
-                "UTC%s%d:%d", offsetPrefix,
-                offsetMinutes / 60, offsetMinutes % 60
-            )
-        }
-    }
-
     companion object {
-        /**
-         * Take a String and return a hex
-         *
-         * @param s
-         * String of bytes to be converted
-         * @return Simple hex-encoded string, for example: a0e23b
-         */
-        fun md5(s: String): String {
-            try {
-                val md = MessageDigest.getInstance("MD5")
-                md.update(s.toByteArray(), 0, s.length)
-                return toHex(md.digest())
-            } catch (e: NoSuchAlgorithmException) {
-                e.printStackTrace()
-            }
-            return ""
-        }
 
-        /**
-         * Convert a byte array to a hex-string. For md5 strings for example
-         *
-         * @param hashValue
-         * Input bytearray
-         * @return ascii hexcode representation of input
-         */
-        fun toHex(hashValue: ByteArray): String {
-            val hexString = StringBuilder()
-            for (i in hashValue.indices) {
-                val hex = Integer.toHexString(0xFF and hashValue[i].toInt())
-                if (hex.length == 1) {
-                    hexString.append('0')
-                }
-                hexString.append(hex)
-            }
-            return hexString.toString()
-        }
 
-        /**
-         * Increase readability of String by inserting spaces every 4 characters
-         *
-         * @param unreadable
-         * String that needs formatting
-         */
-        fun readable(unreadable: String): String {
-            var s = ""
-            var i = 0
-            while (i < unreadable.length) {
-                s += unreadable.substring(i, i + 4) + " "
-                i += 4
-            }
-            return s
-        }
+
     }
 }
