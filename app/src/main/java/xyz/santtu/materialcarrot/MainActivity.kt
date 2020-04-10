@@ -444,10 +444,4 @@ class MainActivity : AppCompatActivity() {
         } catch (e: NullPointerException) { // ignore
         }
     }
-
-    companion object {
-
-
-
-    }
 }
