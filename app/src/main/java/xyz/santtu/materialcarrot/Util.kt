@@ -78,3 +78,32 @@ fun toHex(hashValue: ByteArray): String {
     }
     return hexString.toString()
 }
+
+private val HEX_CHARS = "0123456789abcdef"
+
+fun String.hexStringToByteArray() : ByteArray {
+
+    val result = ByteArray(length / 2)
+    for (i in 0 until length step 2) {
+        val firstIndex = HEX_CHARS.indexOf(this[i])
+        val secondIndex = HEX_CHARS.indexOf(this[i + 1])
+
+        val octet = firstIndex.shl(4).or(secondIndex)
+        result.set(i.shr(1), octet.toByte())
+    }
+
+    return result
+}
+
+/**
+ * Perform all the necessary motp calculations called when the user clicks
+ * the Ok button
+ */
+fun generateOtp(pin: String, secret: String): String {
+    val now = Calendar.getInstance()
+    var epoch = now.timeInMillis.toString()
+    epoch = epoch.substring(0, epoch.length - 4)
+    val hash = md5(epoch + secret + pin)
+    val otp = hash.substring(0, 6)
+    return otp
+}
