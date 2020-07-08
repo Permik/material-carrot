@@ -6,6 +6,7 @@
     <string name="title_activity_add_profile">Add Profile</string>
     <string name="profile_name">Profile name</string>
     <string name="menu_add">Add profile</string>
+    <string name="menu_import">Import profile</string>
     <string name="menu_delete">Delete profile</string>
     <string name="menu_about">About</string>
     <string name="profile_enter_name">Profile name</string>
@@ -16,5 +17,8 @@
     <string name="profile_delete">Delete profile</string>
     <string name="profile_delete_confirm_button">Delete</string>
     <string name="app_about">Material Carrot is a fork of the Potato mOTP client for Android\nhttps://github.com/markusberg/potato_client\nAll credit to Markus Berg, the original developer Potato client.\nhttp://kelvin.nu/software/potato http://motp.sf.net/</string>
+    <string name="profile_enter_secret">Enter secret</string>
+    <string name="profile_import">Import profile</string>
+    <string name="title_activity_import_profile">Import Profile</string>
 
 </resources>

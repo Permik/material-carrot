@@ -35,12 +35,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.santtu.materialcarrot.databinding.ActivityMainBinding
 import xyz.santtu.materialcarrot.databinding.AddProfileBinding
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.util.*
 
@@ -54,6 +53,9 @@ class MainActivity : AppCompatActivity() {
     private var timeout: CountDownTimer? = null
     private var profileSelected = 0
     private var timeCountDownStart: Long = 0
+    private var profilePin: String = ""
+    private var selectedProfileItem: String = ""
+
     val prng: SecureRandom by lazy { SecureRandom.getInstance("SHA1PRNG") }
 //    val model: MainScreenViewModel by viewModels<MainScreenViewModel>()
 
@@ -64,18 +66,47 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
         val model: MainScreenViewModel by viewModels<MainScreenViewModel>()
-        model.getOnetimePassword().observe(this, Observer { password -> binding.otpView.text = password } )
-        model.getUtcOffset().observe(this, Observer { utcOffset -> binding.utcView.text = utcOffset})
+        model.getOnetimePassword().observe(this, { password -> binding.otpView.text = password })
+        model.getUtcOffset().observe(this, { utcOffset -> binding.utcView.text = utcOffset})
         model.getProfileList().apply{
-            this.observe(this@MainActivity, Observer { profiless -> profileTree = profiless; populateProfileSpinner(model) } )
+            this.observe(this@MainActivity,
+                { profiless -> profileTree = profiless; populateProfileSpinner(model) })
             profileTree = this.value!!
         }
-        model.getSelectedProfile().observe(this, Observer { profSelected -> profileSelected = profSelected } )
-        model.getCountdownStart().observe(this, Observer { timeStart -> timeCountDownStart = timeStart } )
-        binding.otpView.setOnClickListener { otpView -> copyToClipboard(otpView) }
+        model.getSelectedProfile().observe(this, { profSelected -> profileSelected = profSelected })
+        model.getSelectedProfileString().observe(this,
+            { selectedProfString -> selectedProfileItem = selectedProfString })
+        model.getCountdownStart().observe(this, { timeStart -> timeCountDownStart = timeStart
+            if (timeStart != 0L) {
+                countDownStart(timeStart)
+                binding.otpView.visibility = View.VISIBLE
+            }
+        })
+        model.getPasswordPin().observe(this, { pin -> profilePin = pin })
+        binding.otpView.setOnClickListener { otpView -> copyToClipboard(otpView as TextView?) }
+        binding.enterPin.editText?.doOnTextChanged(action = {text, _, _, _ ->
+            model.setPasswordPin((text as SpannableStringBuilder).toString())
+        })
+        binding.profileSelector.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                Log.wtf("test", binding.profileSelector.selectedItem as String)
+                model.setSelectedProfileString(binding.profileSelector.selectedItem as String)
+                model.setSelectedProfile(position)
+                if (position != profileSelected) { // The selected profile really has changed
+                    saveProfileSelected()
+                    clearSensitiveData()
+                }
+            }
+        }
         loadPreferences()
         populateProfileSpinner(model)
-        addProfileSpinnerListener(model)
         addPinListener(model)
     }
 
@@ -151,6 +182,17 @@ class MainActivity : AppCompatActivity() {
                 addProfFragment.show(supportFragmentManager, "AddProfile")
                 true
             }
+            R.id.action_import -> {
+                val addProfFragment = ImportProfileDialogFragment()
+                addProfFragment.callback = object : ImportProfileDialogFragment.SetOnPositiveListener{
+                    override fun onAddProfile(name: String, secret: ByteArray) {
+                        model.setProfileList(profileTree.apply { this[name] = toHex(secret)})
+                        populateProfileSpinner(model)
+                    }
+                }
+                addProfFragment.show(supportFragmentManager, "AddProfile")
+                true
+            }
             R.id.action_delete -> {
                 // Log.i("action_delete", "delete current profile");
                 if (profileTree.isNullOrEmpty()) {
@@ -188,51 +230,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Define and open the add profile dialog
-     */
-    fun dialogAddProfile(model: MainScreenViewModel) {
-        val dialog = AppCompatDialog(this)
-        dialogBinding = AddProfileBinding.inflate(LayoutInflater.from(baseContext))
-        val view = dialogBinding.root
-        dialog.setContentView(view)
-        dialog.setTitle(getString(R.string.title_activity_add_profile))
-        // Generate secret
-        val randomBytes = ByteArray(8)
-        prng.nextBytes(randomBytes)
-        // Display secret in ui
-        dialogBinding.profileSecret.text = String.format(
-            getString(R.string.secret_here)+formatAddHexReadability(toHex(randomBytes))
-        )
-        dialog.show()
-    }
-
-    /**
-     * Listen to changes in the profileSpinner
-     */
-    fun addProfileSpinnerListener(model: MainScreenViewModel) { // Log.i("addProfileSpinnerListener",
-// "Add listener to profile spinner");
-        binding.profileSelector.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(
-                parentView: AdapterView<*>?, view: View?,
-                pos: Int, id: Long
-            ) { // Log.i("onItemSelectedListener", "Profile " +
-// Integer.toString(pos) + " was selected");
-// This is triggered a lot, but not always when a new item
-// has been selected. Need to check for that:
-                if (pos != profileSelected) { // The selected profile really has changed
-                    model.setSelectedProfile(pos)
-                    saveProfileSelected()
-                    clearSensitiveData()
-                }
-            }
-
-            override fun onNothingSelected(parentView: AdapterView<*>?) { // Log.i("onNothingSelected", "No profile was selected");
-// enterPin.setEnabled(false);
-            }
-        }
-    }
-
-    /**
      * Set a listener on the enterPin EditText to only enable the Ok-button once
      * a four-digit PIN has been entered.
      */
@@ -261,10 +258,17 @@ class MainActivity : AppCompatActivity() {
             ) { // TODO Auto-generated method stub
             }
         })
-        binding.buttonOk.setOnClickListener { generateOtp(binding.buttonOk, model) }
+        binding.buttonOk.setOnClickListener {
+            Log.wtf("lsl", profileTree.get(selectedProfileItem)!!)
+            model.setOnetimePassword(generateOtp(profilePin, profileTree.get(selectedProfileItem)!!))
+            binding.otpView.visibility = View.VISIBLE
+            model.setCountdownStart(countDownStart(timeCountDownStart))
+        }
         binding.enterPin.editText?.setOnEditorActionListener { _, actionId, _ ->
             if(actionId == EditorInfo.IME_ACTION_DONE){
-                generateOtp(binding.buttonOk, model)
+                model.setOnetimePassword(generateOtp(profilePin, profileTree.get(selectedProfileItem)!!))
+                model.setCountdownStart(countDownStart(timeCountDownStart))
+                binding.otpView.visibility = View.VISIBLE
                 true
             } else {
                 false
@@ -316,7 +320,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * Populate the profileSpinner, and select the correct profile
      */
-    fun populateProfileSpinner(model: MainScreenViewModel) { // Log.i("populateProfileSpinner", "Add all profiles to spinner");
+    fun populateProfileSpinner(model: MainScreenViewModel): Int { // Log.i("populateProfileSpinner", "Add all profiles to spinner");
         val profileList: ArrayList<String>
         if (profileTree.isNullOrEmpty()) {
             profileList = ArrayList()
@@ -326,9 +330,7 @@ class MainActivity : AppCompatActivity() {
         }
         val aa = ArrayAdapter(
             this,
-            R.layout.support_simple_spinner_dropdown_item, ArrayList(
-                profileList
-            )
+            R.layout.support_simple_spinner_dropdown_item, ArrayList(profileList)
         )
         // Specify the layout to use when the list of choices appears
         aa.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
@@ -341,8 +343,8 @@ class MainActivity : AppCompatActivity() {
             profileSelected = if (profileSelected < 0) 0 else profileSelected
             model.setSelectedProfile(profileSelected)
         }
-        // Disable pin-entry, delete-button, and profilespinner
-// if there are no profiles
+        // Disable pin-entry, delete-button, and profilespinner.
+        // if there are no profiles.
         if (profileTree.isNullOrEmpty()) {
             binding.enterPin.isEnabled = false
             binding.profileSelector.isEnabled = false
@@ -351,6 +353,7 @@ class MainActivity : AppCompatActivity() {
             binding.enterPin.isEnabled = true
             binding.profileSelector.isEnabled = true
         }
+        return profileSelected
     }
 
     /**
@@ -372,9 +375,9 @@ class MainActivity : AppCompatActivity() {
      *
      * @param view
      */
-    fun copyToClipboard(view: View?) { // Gets a handle to the clipboard service.
+    fun copyToClipboard(view: TextView?) { // Gets a handle to the clipboard service.
         val cm = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
-        val otpClip = ClipData.newPlainText("text", binding.otpView.text.toString())
+        val otpClip = ClipData.newPlainText("text", view?.text.toString())
         cm?.primaryClip?.addItem(otpClip.getItemAt(0))
         Toast.makeText(
             this, "One-time-password copied to clipboard",
@@ -383,38 +386,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Perform all the necessary motp calculations called when the user clicks
-     * the Ok button
-     */
-    fun generateOtp(view: View?, model: MainScreenViewModel) {
-        val pin = binding.enterPin.editText?.text.toString()
-        val now = Calendar.getInstance()
-        val selection = binding.profileSelector.selectedItem as String
-        var epoch = now.timeInMillis.toString()
-        epoch = epoch.substring(0, epoch.length - 4)
-        val hash = md5(epoch + profileTree[selection] + pin)
-        val otp = hash.substring(0, 6)
-        model.setOnetimePassword(otp)
-        binding.otpView.text = otp
-        binding.otpView.visibility = View.VISIBLE
-        countDownStart(0L, model)
-    }
-
-    /**
      * Start the countdown timer after the otp has been generated. When the
      * timer runs down, all sensitive fields are cleared.
      */
-    fun countDownStart(timeStart: Long, model: MainScreenViewModel) { // Log.i("countDownStart", "Start the countdown.");
+    fun countDownStart(timeStart: Long): Long { // Log.i("countDownStart", "Start the countdown.");
         try {
             timeout!!.cancel()
         } catch (e: NullPointerException) { // ignore
         }
-        model.setCountdownStart(timeCountDownStart.apply { Calendar.getInstance().timeInMillis } )
+        var timecdStart = Calendar.getInstance().timeInMillis
         var secondsLeft = 60
         if (timeStart != 0L) { // Resume the timer, likely after a screen rotate.
 // Adjust values accordingly
-            secondsLeft = (60 - (timeCountDownStart - timeStart) / 1000).toInt()
-            model.setCountdownStart(timeCountDownStart.apply { timeStart } )
+            secondsLeft = (60 - (timecdStart - timeStart) / 1000).toInt()
+            timecdStart = timeStart
         }
         binding.progressBar.progress = secondsLeft * 2
         timeout = object : CountDownTimer((secondsLeft * 1000).toLong(), 500) {
@@ -427,10 +412,12 @@ class MainActivity : AppCompatActivity() {
             }
         }.start()
         binding.progressBar.visibility = View.VISIBLE
+        return timecdStart
     }
 
     /**
      * Clear all fields of sensitive data.
+     *
      */
     fun clearSensitiveData() { // Log.i("clearSensitiveData",
 // "wipe pin, current otp, countdownbar, etc.");
