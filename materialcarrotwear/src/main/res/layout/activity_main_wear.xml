@@ -22,7 +22,6 @@
             android:orientation="vertical"
             android:gravity="center">
 
-
             <TextView
                 android:id="@+id/text"
                 style="@style/TextAppearance.WearDiag.Title"
@@ -43,8 +42,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:src="@drawable/ic_numpad" />
+                android:src="@drawable/ic_numpad"
+                android:contentDescription="Opens the pin input dialog" />
 
         </LinearLayout>
     </androidx.wear.widget.CircularProgressLayout>
+
 </androidx.wear.widget.BoxInsetLayout>
