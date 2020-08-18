@@ -6,9 +6,10 @@ import java.util.*
 import kotlin.math.abs
 
 /**
- * Update the display of our current UTC offset i.e. UTC+1 or UTC-1:30
+ * Generates [String] containing current UTC offset i.e. UTC+1 or UTC-1:30
+ * @return [String] Current UTC offset
  */
-fun UtcOffset(): String {
+fun utcOffset(): String {
     val now = Calendar.getInstance()
     var offsetMinutes = (now[Calendar.ZONE_OFFSET] + now[Calendar.DST_OFFSET]) / 60000
     val offsetPrefix = if (offsetMinutes < 0) "-" else "+"
@@ -27,10 +28,10 @@ fun UtcOffset(): String {
 }
 
 /**
- * Increase readability of String by inserting spaces every 4 characters
+ * Increase readability of a hexcode by inserting spaces every 4 characters
  *
- * @param unreadable
- * String that needs formatting
+ * @param unreadable [String] that needs formatting
+ * @return [String] that is more readable
  */
 fun formatAddHexReadability(unreadable: String): String {
     var formattedString = ""
@@ -45,8 +46,7 @@ fun formatAddHexReadability(unreadable: String): String {
 /**
  * Take a String and return a hex
  *
- * @param s
- * String of bytes to be converted
+ * @param s String of bytes to be encoded
  * @return Simple hex-encoded string, for example: a0e23b
  */
 fun md5(s: String): String {
@@ -63,9 +63,8 @@ fun md5(s: String): String {
 /**
  * Convert a byte array to a hex-string. For md5 strings for example
  *
- * @param hashValue
- * Input bytearray
- * @return ascii hexcode representation of input
+ * @param hashValue [ByteArray] that is converted to a hexcode
+ * @return ASCII hexcode representation of input
  */
 fun toHex(hashValue: ByteArray): String {
     val hexString = StringBuilder()
@@ -79,14 +78,26 @@ fun toHex(hashValue: ByteArray): String {
     return hexString.toString()
 }
 
+/**
+ * Only allowed characters in [hexStringToByteArray]
+ *
+ * "0123456789abcdef"
+ */
 private val HEX_CHARS = "0123456789abcdef"
 
+/**
+ * Converts [String]s to [ByteArray]s
+ *
+ * Notice that String may only contain values that are in [HEX_CHARS]
+ * @return [ByteArray] representation of input
+ */
 fun String.hexStringToByteArray() : ByteArray {
 
     val result = ByteArray(length / 2)
+    val string = this.toLowerCase(Locale.ROOT)
     for (i in 0 until length step 2) {
-        val firstIndex = HEX_CHARS.indexOf(this[i])
-        val secondIndex = HEX_CHARS.indexOf(this[i + 1])
+        val firstIndex = HEX_CHARS.indexOf(string[i])
+        val secondIndex = HEX_CHARS.indexOf(string[i + 1])
 
         val octet = firstIndex.shl(4).or(secondIndex)
         result.set(i.shr(1), octet.toByte())
@@ -98,6 +109,9 @@ fun String.hexStringToByteArray() : ByteArray {
 /**
  * Perform all the necessary motp calculations called when the user clicks
  * the Ok button
+ * @param pin [String] 4 digit pin
+ * @param secret [String] 16 character long hexcode
+ * @return 6 characters long hexcode
  */
 fun generateOtp(pin: String, secret: String): String {
     val now = Calendar.getInstance()
