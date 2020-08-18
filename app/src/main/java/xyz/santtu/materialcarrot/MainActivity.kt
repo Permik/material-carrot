@@ -37,11 +37,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDialog
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.santtu.materialcarrot.databinding.ActivityMainBinding
 import xyz.santtu.materialcarrot.databinding.AddProfileBinding
 import java.security.SecureRandom
 import java.util.*
+import kotlin.collections.ArrayList
 
 // TODO: Add change all dialogs to fragment dialogs to preserve their states on rotate.
 
@@ -55,6 +57,7 @@ class MainActivity : AppCompatActivity() {
     private var timeCountDownStart: Long = 0
     private var profilePin: String = ""
     private var selectedProfileItem: String = ""
+    private var allProfiles: List<Profile> = emptyList()
 
     val prng: SecureRandom by lazy { SecureRandom.getInstance("SHA1PRNG") }
 //    val model: MainScreenViewModel by viewModels<MainScreenViewModel>()
@@ -66,6 +69,7 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
         val model: MainScreenViewModel by viewModels<MainScreenViewModel>()
+        val profileModel: ProfileViewModel by viewModels<ProfileViewModel>()
         model.getOnetimePassword().observe(this, { password -> binding.otpView.text = password })
         model.getUtcOffset().observe(this, { utcOffset -> binding.utcView.text = utcOffset})
         model.getProfileList().apply{
@@ -83,10 +87,49 @@ class MainActivity : AppCompatActivity() {
             }
         })
         model.getPasswordPin().observe(this, { pin -> profilePin = pin })
-        binding.otpView.setOnClickListener { otpView -> copyToClipboard(otpView as TextView?) }
-        binding.enterPin.editText?.doOnTextChanged(action = {text, _, _, _ ->
-            model.setPasswordPin((text as SpannableStringBuilder).toString())
+        profileModel.allProfiles.observe(this, {
+                profileList -> allProfiles = profileList
+            populateProfileSpinner(model)
         })
+
+        /// UI-bindings ///
+        binding.buttonOk.setOnClickListener {
+            Log.wtf("lsl", allProfiles[profileSelected].profileName)
+            model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName))
+            model.setCountdownStart(countDownStart(timeCountDownStart))
+            binding.otpView.visibility = View.VISIBLE
+        }
+        binding.otpView.setOnClickListener { otpView -> copyToClipboard(otpView as TextView?) }
+        binding.enterPin.editText?.let {
+            it.doOnTextChanged(action = {text, _, _, _ ->
+                model.setPasswordPin((text as SpannableStringBuilder).toString())
+            })
+            it.setOnEditorActionListener { _, actionId, _ ->
+                if(actionId == EditorInfo.IME_ACTION_DONE){
+                    model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName))
+                    model.setCountdownStart(countDownStart(timeCountDownStart))
+                    binding.otpView.visibility = View.VISIBLE
+                    true
+                } else {
+                    false
+                }
+            }
+            it.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable) {
+                    /**
+                     * checking profileTree.isEmpty() to work around a bug in older
+                     * versions of Android where enterPin.enable(false) has no
+                     * effect.
+                     */
+                    binding.buttonOk.isEnabled =
+                        (binding.enterPin.editText!!.text.toString().length == 4
+                                && allProfiles.isNotEmpty())
+                }
+                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            })
+
+        }
         binding.profileSelector.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
@@ -96,6 +139,8 @@ class MainActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
+                // TODO: THIS FUCKTARD SHITS ITSELF WHEN THE LAST ITEM IS DELETED, GOTTA FIX
+                Log.wtf("test", position.toString())
                 Log.wtf("test", binding.profileSelector.selectedItem as String)
                 model.setSelectedProfileString(binding.profileSelector.selectedItem as String)
                 model.setSelectedProfile(position)
@@ -107,7 +152,6 @@ class MainActivity : AppCompatActivity() {
         }
         loadPreferences()
         populateProfileSpinner(model)
-        addPinListener(model)
     }
 
     public override fun onStop() {
@@ -169,13 +213,14 @@ class MainActivity : AppCompatActivity() {
         val builder: MaterialAlertDialogBuilder
         val alert: AlertDialog
         val model: MainScreenViewModel by viewModels<MainScreenViewModel>()
+        val profileModel: ProfileViewModel by viewModels<ProfileViewModel>()
         return when (item.itemId) {
             R.id.action_add -> {
 
                 val addProfFragment = AddProfileDialogFragment()
                 addProfFragment.callback = object : AddProfileDialogFragment.SetOnPositiveListener{
                     override fun onAddProfile(name: String, secret: ByteArray) {
-                        model.setProfileList(profileTree.apply { this[name] = toHex(secret)})
+                        profileModel.insert(Profile(0, name, secret))
                         populateProfileSpinner(model)
                     }
                 }
@@ -186,16 +231,17 @@ class MainActivity : AppCompatActivity() {
                 val addProfFragment = ImportProfileDialogFragment()
                 addProfFragment.callback = object : ImportProfileDialogFragment.SetOnPositiveListener{
                     override fun onAddProfile(name: String, secret: ByteArray) {
-                        model.setProfileList(profileTree.apply { this[name] = toHex(secret)})
+                        profileModel.insert(Profile(0, name, secret))
                         populateProfileSpinner(model)
                     }
                 }
-                addProfFragment.show(supportFragmentManager, "AddProfile")
+                addProfFragment.show(supportFragmentManager, "ImportProfile")
                 true
             }
             R.id.action_delete -> {
                 // Log.i("action_delete", "delete current profile");
-                if (profileTree.isNullOrEmpty()) {
+                Log.i("yes", allProfiles[profileSelected].toString())
+                if (allProfiles.isNullOrEmpty()) {
                     return false
                 }
                 builder = MaterialAlertDialogBuilder(this)
@@ -208,7 +254,8 @@ class MainActivity : AppCompatActivity() {
                         // click listener on the alert box
                         // The button was clicked
 // Remove the currently selected profile
-                        model.setProfileList(profileTree.apply { this.remove(binding.profileSelector.selectedItem) })
+                        Log.i("yes", allProfiles[profileSelected].toString())
+                        profileModel.delete(allProfiles[profileSelected])
                         clearSensitiveData()
                         populateProfileSpinner(model)
                     }
@@ -226,53 +273,6 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             else -> true
-        }
-    }
-
-    /**
-     * Set a listener on the enterPin EditText to only enable the Ok-button once
-     * a four-digit PIN has been entered.
-     */
-    fun addPinListener(model: MainScreenViewModel) {
-        binding.enterPin.editText?.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {
-                /**
-                 * checking profileTree.isEmpty() to work around a bug in older
-                 * versions of Android where enterPin.enable(false) has no
-                 * effect.
-                 */
-                binding.buttonOk.isEnabled = (binding.enterPin.editText!!.text.toString().length == 4
-                        && !profileTree.isEmpty())
-
-            }
-
-            override fun beforeTextChanged(
-                s: CharSequence, start: Int, count: Int,
-                after: Int
-            ) { // TODO Auto-generated method stub
-            }
-
-            override fun onTextChanged(
-                s: CharSequence, start: Int, before: Int,
-                count: Int
-            ) { // TODO Auto-generated method stub
-            }
-        })
-        binding.buttonOk.setOnClickListener {
-            Log.wtf("lsl", profileTree.get(selectedProfileItem)!!)
-            model.setOnetimePassword(generateOtp(profilePin, profileTree.get(selectedProfileItem)!!))
-            binding.otpView.visibility = View.VISIBLE
-            model.setCountdownStart(countDownStart(timeCountDownStart))
-        }
-        binding.enterPin.editText?.setOnEditorActionListener { _, actionId, _ ->
-            if(actionId == EditorInfo.IME_ACTION_DONE){
-                model.setOnetimePassword(generateOtp(profilePin, profileTree.get(selectedProfileItem)!!))
-                model.setCountdownStart(countDownStart(timeCountDownStart))
-                binding.otpView.visibility = View.VISIBLE
-                true
-            } else {
-                false
-            }
         }
     }
 
@@ -322,11 +322,11 @@ class MainActivity : AppCompatActivity() {
      */
     fun populateProfileSpinner(model: MainScreenViewModel): Int { // Log.i("populateProfileSpinner", "Add all profiles to spinner");
         val profileList: ArrayList<String>
-        if (profileTree.isNullOrEmpty()) {
+        if (allProfiles.isNullOrEmpty()) {
             profileList = ArrayList()
             profileList.add("(no profile)")
         } else {
-            profileList = ArrayList(profileTree.keys)
+            profileList = allProfiles.map { it.profileName } as ArrayList<String>
         }
         val aa = ArrayAdapter(
             this,
@@ -337,7 +337,7 @@ class MainActivity : AppCompatActivity() {
         // Apply the adapter to the spinner
         binding.profileSelector.adapter = aa
         // Log.i("setSelectedProfile", "Set the currently selected profile");
-        if (!profileTree.isNullOrEmpty()){
+        if (!allProfiles.isNullOrEmpty()){
             profileSelected =
                 if (profileSelected == profileTree.size) profileSelected - 1 else profileSelected
             profileSelected = if (profileSelected < 0) 0 else profileSelected
@@ -345,7 +345,7 @@ class MainActivity : AppCompatActivity() {
         }
         // Disable pin-entry, delete-button, and profilespinner.
         // if there are no profiles.
-        if (profileTree.isNullOrEmpty()) {
+        if (allProfiles.isNullOrEmpty()) {
             binding.enterPin.isEnabled = false
             binding.profileSelector.isEnabled = false
         } else {
