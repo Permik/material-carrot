@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import java.util.*
-import kotlin.reflect.KProperty
 
 
 const val OTP_PASSWORD_KEY = "otpPasswordKey"
@@ -27,8 +26,7 @@ class MainScreenViewModel(private val state: SavedStateHandle) : ViewModel() {
         fun getPasswordPin(): MutableLiveData<String> = state.getLiveData(OTP_PASSWORD_PIN_KEY, "")
         fun setPasswordPin(value: String): Unit = state.set(OTP_PASSWORD_PIN_KEY, value)
 
-
-        //    var countdownStart: MutableLiveData<Long>
+//    var countdownStart: MutableLiveData<Long>
         fun getCountdownStart(): MutableLiveData<Long> = state.getLiveData(COUNTDOWN_START_KEY, 0)
         fun setCountdownStart(value: Long): Unit  = state.set(COUNTDOWN_START_KEY, value)
 
@@ -48,7 +46,7 @@ class MainScreenViewModel(private val state: SavedStateHandle) : ViewModel() {
         fun getUtcOffset(): LiveData<String> {
             val offset: LiveData<String> = state.getLiveData(UTC_OFFSET_KEY)
             return if (offset.value.isNullOrEmpty()){
-                state.set(UTC_OFFSET_KEY, UtcOffset())
+                state.set(UTC_OFFSET_KEY, utcOffset())
                 offset
             }else{
                 offset
