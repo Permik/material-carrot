@@ -1,5 +1,6 @@
 package xyz.santtu.materialcarrotwear
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -10,11 +11,13 @@ import android.os.Bundle
 import android.transition.Visibility
 import android.util.Log
 import android.view.View
-import androidx.activity.invoke
+import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.launch
 import androidx.fragment.app.FragmentActivity
 import androidx.wear.ambient.AmbientModeSupport
 import xyz.santtu.materialcarrotwear.databinding.ActivityMainWearBinding
+import java.util.ArrayList
 
 
 class MainWearActivity : FragmentActivity(), AmbientModeSupport.AmbientCallbackProvider{
@@ -51,13 +54,13 @@ class MainWearActivity : FragmentActivity(), AmbientModeSupport.AmbientCallbackP
         pinOrigColor = binding.pinButton.backgroundTintList!!
         circleOrigColor = binding.progressCircular.colorSchemeColors
 
-        binding.pinButton.setOnClickListener {pin(this)}
+        binding.pinButton.setOnClickListener {pin.launch(this)}
 
         // Enables Always-on
         ambientController = AmbientModeSupport.attach(this)
     }
 
-    private val pin = prepareCall(GetPin()) {
+    private val pin = registerForActivityResult(GetPin()) {
         if (!it.isNullOrBlank()){
             binding.code.text = it
             setTimer()
@@ -78,7 +81,7 @@ class MainWearActivity : FragmentActivity(), AmbientModeSupport.AmbientCallbackP
     inner class MyAmbientCallback : AmbientModeSupport.AmbientCallback() {
 
         override fun onEnterAmbient(ambientDetails: Bundle?) {
-            super.onEnterAmbient(ambientDetails);
+            super.onEnterAmbient(ambientDetails)
             binding.text.paint.isAntiAlias = false
             binding.progressCircular.colorSchemeColors
             binding.progressCircular.setColorSchemeColors(Color.WHITE)
@@ -96,11 +99,15 @@ class MainWearActivity : FragmentActivity(), AmbientModeSupport.AmbientCallbackP
 
         override fun onUpdateAmbient() {
             // Update the content
+            super.onUpdateAmbient()
         }
     }
 
     inner class GetPin : ActivityResultContract<Context, String?>() {
-        override fun createIntent(context: Context?): Intent =
+        override fun createIntent(
+            context: Context,
+            input: Context?
+        ): Intent =
             Intent(context, PinWearActivity::class.java)
 
         override fun parseResult(resultCode: Int, result: Intent?) : String? {
