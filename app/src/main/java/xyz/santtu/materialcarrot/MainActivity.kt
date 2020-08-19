@@ -237,22 +237,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Save profiles to prefs
-     */
-    fun saveProfiles() {
-        val preferences = getSharedPreferences(
-            "Profiles",
-            Context.MODE_PRIVATE
-        )
-        val prefEditor = preferences.edit()
-        prefEditor.clear()
-        for (k in profileTree.keys) {
-            prefEditor.putString(k, profileTree[k])
-        }
-        prefEditor.apply()
-    }
-
-    /**
      * Populate the profileSpinner, and select the correct profile
      */
     fun populateProfileSpinner(model: MainScreenViewModel): Int { // Log.i("populateProfileSpinner", "Add all profiles to spinner");
