@@ -151,43 +151,6 @@ class MainActivity : AppCompatActivity() {
         populateProfileSpinner(model)
     }
 
-    public override fun onStop() {
-        super.onStop()
-        // Log.i("onStop", "App has been stopped");
-    }
-
-    public override fun onPause() {
-        super.onPause()
-        // Log.i("onPause", "App has been sent to background");
-    }
-
-    public override fun onResume() {
-        super.onResume()
-        // Log.i("onResume", "The app is coming back");
-    }
-
-//    public override fun onSaveInstanceState(outState: Bundle) {
-//        super.onSaveInstanceState(outState)
-//        // Save whatever we need to persist
-//// Log.i("onSaveInstanceState", "save pin and otp, etc.");
-//        //outState.putString("pin", binding.enterPin.editText?.text.toString())
-//        outState.putString("otp", binding.otpView.text.toString())
-//        outState.putLong("timeCountDownStart", timeCountDownStart)
-//    }
-
-//    public override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-//        super.onRestoreInstanceState(savedInstanceState)
-//        // Log.i("onRestoreInstanceState", "restore pin and otp, etc.");
-//// Retrieve the data stored onSaveInstanceState
-//        timeCountDownStart = savedInstanceState.getLong("timeCountDownStart")
-//        if (timeCountDownStart != 0L) {
-//            //binding.enterPin.editText?.text ?: savedInstanceState.getString("pin")
-//            binding.otpView.text = savedInstanceState.getString("otp")
-//            binding.otpView.visibility = View.VISIBLE
-//            countDownStart(timeCountDownStart)
-//        }
-//    }
-
     /**
      * Commenting this out. Doesn't update the action bar...
      *
