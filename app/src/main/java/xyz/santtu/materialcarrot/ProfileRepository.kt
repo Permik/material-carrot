@@ -23,7 +23,7 @@ class ProfileRepository(private val profileDao: ProfileDao){
 
     /**
      * Suspend function that inserts a [Profile] to [ProfileRoomDatabase]
-     * @param profile [Profile] that'll be added to the [ProfileRoomDatabase]
+     * @param profile [Profile] that'll be inserted to the [ProfileRoomDatabase]
      */
     suspend fun insert(profile: Profile){
         profileDao.insert(profile)

@@ -19,10 +19,18 @@ class ProfileViewModel(application: Application): AndroidViewModel(application){
         allProfiles = repository.allProfiles()
     }
 
+    /**
+     * Launches a coroutine that inserts a [Profile] to the [ProfileRoomDatabase]
+     * @param profile [Profile] that is inserted to the [ProfileRoomDatabase]
+     */
     fun insert(profile: Profile) = viewModelScope.launch(Dispatchers.IO){
         repository.insert(profile)
     }
 
+    /**
+     * Launches a coroutine that deletes a [Profile] from the [ProfileRoomDatabase]
+     * @param profile [Profile] that is deleted form [ProfileRoomDatabase]
+     */
     fun delete(profile: Profile) = viewModelScope.launch(Dispatchers.IO) {
         repository.delete(profile)
     }
