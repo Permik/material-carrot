@@ -19,25 +19,29 @@
 </markus> */
 package xyz.santtu.materialcarrot
 
-import android.content.Context
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.text.*
+import android.text.Editable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.TextWatcher
 import android.text.util.Linkify
 import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.*
+import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDialog
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.Observer
-import androidx.lifecycle.asLiveData
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.santtu.materialcarrot.databinding.ActivityMainBinding
 import xyz.santtu.materialcarrot.databinding.AddProfileBinding
@@ -59,11 +63,7 @@ class MainActivity : AppCompatActivity() {
     private var selectedProfileItem: String = ""
     private var allProfiles: List<Profile> = emptyList()
 
-    val prng: SecureRandom by lazy { SecureRandom.getInstance("SHA1PRNG") }
-//    val model: MainScreenViewModel by viewModels<MainScreenViewModel>()
-
-
-    public override fun onCreate(savedInstanceState: Bundle?) { // Log.i("onCreate", "Create main activity");
+    public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
@@ -101,17 +101,22 @@ class MainActivity : AppCompatActivity() {
         }
         binding.otpView.setOnClickListener { otpView -> copyToClipboard(otpView as TextView?) }
         binding.enterPin.editText?.let {
-            it.doOnTextChanged(action = {text, _, _, _ ->
-                model.setPasswordPin((text as SpannableStringBuilder).toString())
+            it.doOnTextChanged(action = { text, _, _, _ ->
+                if (text?.length == 4) {
+                    model.setPasswordPin((text as SpannableStringBuilder).toString())
+                } else{
+                    model.setPasswordPin("")
+                }
             })
-            it.setOnEditorActionListener { _, actionId, _ ->
-                if(actionId == EditorInfo.IME_ACTION_DONE){
+            it.setOnEditorActionListener { textView, actionId, _ ->
+                if(actionId == EditorInfo.IME_ACTION_DONE && textView.text.length == 4){
                     model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName))
                     model.setCountdownStart(countDownStart(timeCountDownStart))
                     binding.otpView.visibility = View.VISIBLE
-                    true
-                } else {
                     false
+                } else {
+                    Toast.makeText(applicationContext, "Pin needs to be 4 digits long!", Toast.LENGTH_LONG).show()
+                    true
                 }
             }
             it.addTextChangedListener(object : TextWatcher {
@@ -213,7 +218,7 @@ class MainActivity : AppCompatActivity() {
                     ) { _, _ ->
                         // click listener on the alert box
                         // The button was clicked
-// Remove the currently selected profile
+                        // Remove the currently selected profile
                         Log.i("yes", allProfiles[profileSelected].toString())
                         profileModel.delete(allProfiles[profileSelected])
                         clearSensitiveData()
@@ -325,8 +330,9 @@ class MainActivity : AppCompatActivity() {
      * Clear all fields of sensitive data.
      *
      */
-    fun clearSensitiveData() { // Log.i("clearSensitiveData",
-// "wipe pin, current otp, countdownbar, etc.");
+    fun clearSensitiveData() {
+        // Log.i("clearSensitiveData",
+        // "wipe pin, current otp, countdownbar, etc.");
         binding.enterPin.editText?.setText("")
         binding.otpView.text = ""
         binding.otpView.visibility = View.INVISIBLE
