@@ -139,18 +139,15 @@ class MainActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                // TODO: THIS FUCKTARD SHITS ITSELF WHEN THE LAST ITEM IS DELETED, GOTTA FIX
-                Log.wtf("test", position.toString())
                 Log.wtf("test", binding.profileSelector.selectedItem as String)
+
                 model.setSelectedProfileString(binding.profileSelector.selectedItem as String)
                 model.setSelectedProfile(position)
                 if (position != profileSelected) { // The selected profile really has changed
-                    saveProfileSelected()
                     clearSensitiveData()
                 }
             }
         }
-        loadPreferences()
         populateProfileSpinner(model)
     }
 
@@ -277,31 +274,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Fetch profiles and the selected profile from saved prefs
-     */
-    fun loadPreferences() { // Log.i("loadPreferences", "Loading preferences from disk");
-        var preferences = getSharedPreferences(
-            "Profiles",
-            Context.MODE_PRIVATE
-        )
-//        profileTree = TreeMap()
-//        val profileDump = preferences.all
-//        for ((key, value) in profileDump) {
-//            profileTree!![key] = value as String
-//        }
-        /**
-         * temporary hard-coded profiles if there's nothing stored
-         *
-         * if (profileTree.isEmpty()) { profileTree.put("Earth",
-         * "b0bbf8eb606254dd"); profileTree.put("Mercury", "b0bbf8eb606254db");
-         * profileTree.put("Venus", "b0bbf8eb606254dc"); }
-         */
-        // Open the main app preferences
-        preferences = getSharedPreferences("Main", Context.MODE_PRIVATE)
-        //profileSelected = preferences.getInt("profileSelected", 0)
-    }
-
-    /**
      * Save profiles to prefs
      */
     fun saveProfiles() {
@@ -339,7 +311,7 @@ class MainActivity : AppCompatActivity() {
         // Log.i("setSelectedProfile", "Set the currently selected profile");
         if (!allProfiles.isNullOrEmpty()){
             profileSelected =
-                if (profileSelected == profileTree.size) profileSelected - 1 else profileSelected
+                if (profileSelected == profileList.size) profileSelected - 1 else profileSelected
             profileSelected = if (profileSelected < 0) 0 else profileSelected
             model.setSelectedProfile(profileSelected)
         }
@@ -354,19 +326,6 @@ class MainActivity : AppCompatActivity() {
             binding.profileSelector.isEnabled = true
         }
         return profileSelected
-    }
-
-    /**
-     * Save the currently selected profile to prefs
-     */
-    fun saveProfileSelected() {
-        val profileSettings = getSharedPreferences(
-            "Main",
-            Context.MODE_PRIVATE
-        )
-        val prefEditor = profileSettings.edit()
-        prefEditor.putInt("profileSelected", profileSelected)
-        prefEditor.apply()
     }
 
     /**
