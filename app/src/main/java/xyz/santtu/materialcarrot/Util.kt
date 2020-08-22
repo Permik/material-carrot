@@ -94,10 +94,10 @@ private val HEX_CHARS = "0123456789abcdef"
 fun String.hexStringToByteArray() : ByteArray {
 
     val result = ByteArray(length / 2)
-    val string = this.toLowerCase(Locale.ROOT)
+    //val string = this.toLowerCase(Locale.ROOT)
     for (i in 0 until length step 2) {
-        val firstIndex = HEX_CHARS.indexOf(string[i])
-        val secondIndex = HEX_CHARS.indexOf(string[i + 1])
+        val firstIndex = HEX_CHARS.indexOf(this[i])
+        val secondIndex = HEX_CHARS.indexOf(this[i + 1])
 
         val octet = firstIndex.shl(4).or(secondIndex)
         result.set(i.shr(1), octet.toByte())
@@ -109,13 +109,16 @@ fun String.hexStringToByteArray() : ByteArray {
 /**
  * Perform all the necessary motp calculations called when the user clicks
  * the Ok button
+ *
+ * @see [Calendar.getTimeInMillis]
+ *
  * @param pin [String] 4 digit pin
  * @param secret [String] 16 character long hexcode
+ * @param timeInMillis [Long] Current time in milliseconds
  * @return 6 characters long hexcode
  */
-fun generateOtp(pin: String, secret: String): String {
-    val now = Calendar.getInstance()
-    var epoch = now.timeInMillis.toString()
+fun generateOtp(pin: String, secret: String, timeInMillis: Long): String {
+    var epoch = timeInMillis.toString()
     epoch = epoch.substring(0, epoch.length - 4)
     val hash = md5(epoch + secret + pin)
     val otp = hash.substring(0, 6)
