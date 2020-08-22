@@ -53,9 +53,8 @@ import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var dialogBinding: AddProfileBinding
     private lateinit var binding: ActivityMainBinding
-    private lateinit var profileTree: TreeMap<String, String>
+    private lateinit var calendarInstance: Calendar
     private var timeout: CountDownTimer? = null
     private var profileSelected = 0
     private var timeCountDownStart: Long = 0
@@ -67,16 +66,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
+        calendarInstance = Calendar.getInstance()
         setContentView(view)
         val model: MainScreenViewModel by viewModels<MainScreenViewModel>()
         val profileModel: ProfileViewModel by viewModels<ProfileViewModel>()
         model.getOnetimePassword().observe(this, { password -> binding.otpView.text = password })
         model.getUtcOffset().observe(this, { utcOffset -> binding.utcView.text = utcOffset})
-        model.getProfileList().apply{
-            this.observe(this@MainActivity,
-                { profiless -> profileTree = profiless; populateProfileSpinner(model) })
-            profileTree = this.value!!
-        }
         model.getSelectedProfile().observe(this, { profSelected -> profileSelected = profSelected })
         model.getSelectedProfileString().observe(this,
             { selectedProfString -> selectedProfileItem = selectedProfString })
@@ -95,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         /// UI-bindings ///
         binding.buttonOk.setOnClickListener {
             Log.wtf("lsl", allProfiles[profileSelected].profileName)
-            model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName))
+            model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName, calendarInstance.timeInMillis))
             model.setCountdownStart(countDownStart(timeCountDownStart))
             binding.otpView.visibility = View.VISIBLE
         }
@@ -110,7 +105,7 @@ class MainActivity : AppCompatActivity() {
             })
             it.setOnEditorActionListener { textView, actionId, _ ->
                 if(actionId == EditorInfo.IME_ACTION_DONE && textView.text.length == 4){
-                    model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName))
+                    model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName, calendarInstance.timeInMillis))
                     model.setCountdownStart(countDownStart(timeCountDownStart))
                     binding.otpView.visibility = View.VISIBLE
                     false
