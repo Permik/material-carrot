@@ -8,16 +8,16 @@
         android:title="@string/menu_add"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_import"
-        android:icon="@drawable/ic_menu_import"
+        android:id="@+id/action_delete"
+        android:icon="@drawable/ic_menu_delete"
         android:orderInCategory="200"
         android:title="@string/menu_delete"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_delete"
-        android:icon="@drawable/ic_menu_delete"
+        android:id="@+id/action_import"
+        android:icon="@drawable/ic_menu_import"
         android:orderInCategory="300"
-        android:title="@string/menu_delete"
+        android:title="@string/menu_import"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_about"
