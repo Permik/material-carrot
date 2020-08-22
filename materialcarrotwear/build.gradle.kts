@@ -43,17 +43,24 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(kotlin("stdlib-jdk8", KotlinCompilerVersion.VERSION))
-    implementation("androidx.core:core-ktx:1.3.1")
+
+    implementation("androidx.core:core:1.5.0-alpha02")
+    implementation("androidx.core:core-ktx:1.5.0-alpha02")
+
     implementation("androidx.appcompat:appcompat:1.3.0-alpha01")
     implementation("androidx.appcompat:appcompat-resources:1.3.0-alpha01")
+
     implementation("androidx.activity:activity:1.2.0-alpha07")
     implementation("androidx.activity:activity-ktx:1.2.0-alpha07")
+
     implementation("androidx.fragment:fragment:1.3.0-alpha07")
     implementation("androidx.fragment:fragment-ktx:1.3.0-alpha07")
+
     implementation("com.google.android.support:wearable:2.7.0")
 
     implementation("androidx.wear:wear:1.0.0")
     implementation("com.google.android.material:material:1.2.0")
+    
     testImplementation("junit:junit:4.13")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.0.10")
     androidTestImplementation("androidx.test.ext:junit:1.1.1")
