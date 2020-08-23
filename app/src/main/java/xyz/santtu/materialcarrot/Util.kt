@@ -2,6 +2,7 @@ package xyz.santtu.materialcarrot
 
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.time.Instant
 import java.util.*
 import kotlin.math.abs
 
@@ -114,11 +115,10 @@ fun String.hexStringToByteArray() : ByteArray {
  *
  * @param pin [String] 4 digit pin
  * @param secret [String] 16 character long hexcode
- * @param timeInMillis [Long] Current time in milliseconds
  * @return 6 characters long hexcode
  */
-fun generateOtp(pin: String, secret: String, timeInMillis: Long): String {
-    var epoch = timeInMillis.toString()
+fun generateOtp(pin: String, secret: String): String {
+    var epoch = Instant.now().toEpochMilli().toString()
     epoch = epoch.substring(0, epoch.length - 4)
     val hash = md5(epoch + secret + pin)
     val otp = hash.substring(0, 6)

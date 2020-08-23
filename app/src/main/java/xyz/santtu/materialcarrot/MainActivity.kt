@@ -46,6 +46,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.santtu.materialcarrot.databinding.ActivityMainBinding
 import xyz.santtu.materialcarrot.databinding.AddProfileBinding
 import java.security.SecureRandom
+import java.time.Instant
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -54,7 +55,6 @@ import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var calendarInstance: Calendar
     private var timeout: CountDownTimer? = null
     private var profileSelected = 0
     private var timeCountDownStart: Long = 0
@@ -66,7 +66,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
-        calendarInstance = Calendar.getInstance()
         setContentView(view)
         val model: MainScreenViewModel by viewModels<MainScreenViewModel>()
         val profileModel: ProfileViewModel by viewModels<ProfileViewModel>()
@@ -90,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         /// UI-bindings ///
         binding.buttonOk.setOnClickListener {
             Log.wtf("lsl", allProfiles[profileSelected].profileName)
-            model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName, calendarInstance.timeInMillis))
+            model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName))
             model.setCountdownStart(countDownStart(timeCountDownStart))
             binding.otpView.visibility = View.VISIBLE
         }
@@ -105,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             })
             it.setOnEditorActionListener { textView, actionId, _ ->
                 if(actionId == EditorInfo.IME_ACTION_DONE && textView.text.length == 4){
-                    model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName, calendarInstance.timeInMillis))
+                    model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName))
                     model.setCountdownStart(countDownStart(timeCountDownStart))
                     binding.otpView.visibility = View.VISIBLE
                     false
@@ -300,10 +299,11 @@ class MainActivity : AppCompatActivity() {
             timeout!!.cancel()
         } catch (e: NullPointerException) { // ignore
         }
-        var timecdStart = Calendar.getInstance().timeInMillis
+        var timecdStart = Instant.now().toEpochMilli()
         var secondsLeft = 60
-        if (timeStart != 0L) { // Resume the timer, likely after a screen rotate.
-// Adjust values accordingly
+        if (timeStart != 0L) {
+            // Resume the timer, likely after a screen rotate.
+            // Adjust values accordingly
             secondsLeft = (60 - (timecdStart - timeStart) / 1000).toInt()
             timecdStart = timeStart
         }
