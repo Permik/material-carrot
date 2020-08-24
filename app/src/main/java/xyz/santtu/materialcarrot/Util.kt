@@ -111,16 +111,19 @@ fun String.hexStringToByteArray() : ByteArray {
  * Perform all the necessary motp calculations called when the user clicks
  * the Ok button
  *
- * @see [Calendar.getTimeInMillis]
+ *
  *
  * @param pin [String] 4 digit pin
  * @param secret [String] 16 character long hexcode
  * @return 6 characters long hexcode
  */
 fun generateOtp(pin: String, secret: String): String {
-    var epoch = Instant.now().toEpochMilli().toString()
-    epoch = epoch.substring(0, epoch.length - 4)
+    var epoch = Instant.now().epochSecond.toString()
+    // We only need 10 second granularity
+    epoch = epoch.dropLast(1)
+
     val hash = md5(epoch + secret + pin)
-    val otp = hash.substring(0, 6)
+
+    val otp = hash.take(6)
     return otp
 }
