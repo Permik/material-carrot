@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             { selectedProfString -> selectedProfileItem = selectedProfString })
         model.getCountdownStart().observe(this, { timeStart -> timeCountDownStart = timeStart
             if (timeStart != 0L) {
-                countDownStart(timeStart)
+                timeCountDownStart = countDownStart(timeStart)
                 binding.otpView.visibility = View.VISIBLE
             }
         })
@@ -84,6 +84,9 @@ class MainActivity : AppCompatActivity() {
         profileModel.allProfiles.observe(this, {
                 profileList -> allProfiles = profileList
             populateProfileSpinner(model)
+            if (profileList.isEmpty()){
+                invalidateOptionsMenu()
+            }
         })
 
         /// UI-bindings ///
@@ -91,6 +94,7 @@ class MainActivity : AppCompatActivity() {
             Log.wtf("GenerateButton", allProfiles[profileSelected].profileName)
             Log.wtf("GenerateButton", toHex(allProfiles[profileSelected].profileSecret))
             model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName))
+            model.setCountdownStart(countDownStart(0))
             model.setCountdownStart(countDownStart(timeCountDownStart))
             binding.otpView.visibility = View.VISIBLE
         }
@@ -108,6 +112,7 @@ class MainActivity : AppCompatActivity() {
                     Log.wtf("GenerateIMEButton", allProfiles[profileSelected].profileName)
                     Log.wtf("GenerateIMEButton", toHex(allProfiles[profileSelected].profileSecret))
                     model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName))
+                    model.setCountdownStart(countDownStart(0))
                     model.setCountdownStart(countDownStart(timeCountDownStart))
                     binding.otpView.visibility = View.VISIBLE
                     false
@@ -153,15 +158,13 @@ class MainActivity : AppCompatActivity() {
         populateProfileSpinner(model)
     }
 
-    /**
-     * Commenting this out. Doesn't update the action bar...
-     *
-     * @Override public boolean onPrepareOptionsMenu(Menu menu) { MenuItem
-     * actionDelete = menu.findItem(R.id.action_delete);
-     * actionDelete.setEnabled(!profileTree.isEmpty());
-     *
-     * super.onPrepareOptionsMenu(menu); return true; }
-     */
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        if (allProfiles.isEmpty() && menu != null){
+            menu.findItem(R.id.action_delete).setEnabled(false)
+        }
+        return true
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.activity_main, menu)
         return true
