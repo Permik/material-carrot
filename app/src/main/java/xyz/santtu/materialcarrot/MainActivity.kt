@@ -88,7 +88,8 @@ class MainActivity : AppCompatActivity() {
 
         /// UI-bindings ///
         binding.buttonOk.setOnClickListener {
-            Log.wtf("lsl", allProfiles[profileSelected].profileName)
+            Log.wtf("GenerateButton", allProfiles[profileSelected].profileName)
+            Log.wtf("GenerateButton", toHex(allProfiles[profileSelected].profileSecret))
             model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName))
             model.setCountdownStart(countDownStart(timeCountDownStart))
             binding.otpView.visibility = View.VISIBLE
@@ -104,6 +105,8 @@ class MainActivity : AppCompatActivity() {
             })
             it.setOnEditorActionListener { textView, actionId, _ ->
                 if(actionId == EditorInfo.IME_ACTION_DONE && textView.text.length == 4){
+                    Log.wtf("GenerateIMEButton", allProfiles[profileSelected].profileName)
+                    Log.wtf("GenerateIMEButton", toHex(allProfiles[profileSelected].profileSecret))
                     model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName))
                     model.setCountdownStart(countDownStart(timeCountDownStart))
                     binding.otpView.visibility = View.VISIBLE
@@ -238,7 +241,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * Populate the profileSpinner, and select the correct profile
      */
-    fun populateProfileSpinner(model: MainScreenViewModel): Int { // Log.i("populateProfileSpinner", "Add all profiles to spinner");
+    fun populateProfileSpinner(model: MainScreenViewModel): Int {
         val profileList: ArrayList<String>
         if (allProfiles.isNullOrEmpty()) {
             profileList = ArrayList()
