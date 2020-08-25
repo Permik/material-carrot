@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         binding.buttonOk.setOnClickListener {
             Log.wtf("GenerateButton", allProfiles[profileSelected].profileName)
             Log.wtf("GenerateButton", toHex(allProfiles[profileSelected].profileSecret))
-            model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName))
+            model.setOnetimePassword(generateOtp(profilePin, toHex(allProfiles[profileSelected].profileSecret)))
             model.setCountdownStart(countDownStart(0))
             model.setCountdownStart(countDownStart(timeCountDownStart))
             binding.otpView.visibility = View.VISIBLE
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                 if(actionId == EditorInfo.IME_ACTION_DONE && textView.text.length == 4){
                     Log.wtf("GenerateIMEButton", allProfiles[profileSelected].profileName)
                     Log.wtf("GenerateIMEButton", toHex(allProfiles[profileSelected].profileSecret))
-                    model.setOnetimePassword(generateOtp(profilePin, allProfiles[profileSelected].profileName))
+                    model.setOnetimePassword(generateOtp(profilePin, toHex(allProfiles[profileSelected].profileSecret)))
                     model.setCountdownStart(countDownStart(0))
                     model.setCountdownStart(countDownStart(timeCountDownStart))
                     binding.otpView.visibility = View.VISIBLE
