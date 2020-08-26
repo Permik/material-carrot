@@ -25,5 +25,4 @@ class UtilUnitTest {
         assert("0123456789ABCDEF".hexStringToByteArray().contentEquals(compareTo))
     }
 
-    // b56e aaec a79f 9518
 }
