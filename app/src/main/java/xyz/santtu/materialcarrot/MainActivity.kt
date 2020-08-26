@@ -44,10 +44,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.santtu.materialcarrot.databinding.ActivityMainBinding
-import xyz.santtu.materialcarrot.databinding.AddProfileBinding
-import java.security.SecureRandom
 import java.time.Instant
-import java.util.*
 import kotlin.collections.ArrayList
 
 // TODO: Add change all dialogs to fragment dialogs to preserve their states on rotate.
@@ -67,8 +64,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        val model: MainScreenViewModel by viewModels<MainScreenViewModel>()
-        val profileModel: ProfileViewModel by viewModels<ProfileViewModel>()
+        val model: MainScreenViewModel by viewModels()
+        val profileModel: ProfileViewModel by viewModels()
         model.getOnetimePassword().observe(this, { password -> binding.otpView.text = password })
         model.getUtcOffset().observe(this, { utcOffset -> binding.utcView.text = utcOffset})
         model.getSelectedProfile().observe(this, { profSelected -> profileSelected = profSelected })
