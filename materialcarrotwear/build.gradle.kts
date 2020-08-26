@@ -47,14 +47,14 @@ dependencies {
     implementation("androidx.core:core:1.5.0-alpha02")
     implementation("androidx.core:core-ktx:1.5.0-alpha02")
 
-    implementation("androidx.appcompat:appcompat:1.3.0-alpha01")
-    implementation("androidx.appcompat:appcompat-resources:1.3.0-alpha01")
+    implementation("androidx.appcompat:appcompat:1.3.0-alpha02")
+    implementation("androidx.appcompat:appcompat-resources:1.3.0-alpha02")
 
-    implementation("androidx.activity:activity:1.2.0-alpha07")
-    implementation("androidx.activity:activity-ktx:1.2.0-alpha07")
+    implementation("androidx.activity:activity:1.2.0-alpha08")
+    implementation("androidx.activity:activity-ktx:1.2.0-alpha08")
 
-    implementation("androidx.fragment:fragment:1.3.0-alpha07")
-    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha07")
+    implementation("androidx.fragment:fragment:1.3.0-alpha08")
+    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha08")
 
     implementation("com.google.android.support:wearable:2.7.0")
 
@@ -63,8 +63,8 @@ dependencies {
     
     testImplementation("junit:junit:4.13")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.0.10")
-    androidTestImplementation("androidx.test.ext:junit:1.1.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.2")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
 
     compileOnly("com.google.android.wearable:wearable:2.7.0")
 }

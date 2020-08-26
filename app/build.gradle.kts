@@ -52,27 +52,27 @@ dependencies {
     implementation("androidx.core:core:1.5.0-alpha02")
     implementation("androidx.core:core-ktx:1.5.0-alpha02")
 
-    implementation("androidx.appcompat:appcompat:1.3.0-alpha01")
-    implementation("androidx.appcompat:appcompat-resources:1.3.0-alpha01")
+    implementation("androidx.appcompat:appcompat:1.3.0-alpha02")
+    implementation("androidx.appcompat:appcompat-resources:1.3.0-alpha02")
 
     implementation ("androidx.collection:collection-ktx:1.1.0")
 
-    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha07")
+    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha08")
 
     implementation("androidx.room:room-runtime:2.3.0-alpha02")
     implementation("androidx.room:room-ktx:2.3.0-alpha02")
     kapt("androidx.room:room-compiler:2.3.0-alpha02")
 
-    implementation("androidx.lifecycle:lifecycle-livedata-core-ktx:2.3.0-alpha06")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha06")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha06")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.0-alpha06")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-alpha06")
+    implementation("androidx.lifecycle:lifecycle-livedata-core-ktx:2.3.0-alpha07")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha07")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha07")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.0-alpha07")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-alpha07")
 
     implementation("androidx.navigation:navigation-ui-ktx:2.3.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.0")
 
-    implementation("androidx.constraintlayout:constraintlayout:1.1.3")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.0")
 
     implementation("com.google.android.material:material:1.2.0")
 
@@ -83,14 +83,14 @@ dependencies {
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.0.10")
 
-    androidTestImplementation("androidx.test:core:1.3.0-rc03")
-    androidTestImplementation ("androidx.test:runner:1.3.0-rc03")
+    androidTestImplementation("androidx.test:core:1.3.0")
+    androidTestImplementation ("androidx.test:runner:1.3.0")
     androidTestImplementation ("androidx.test:rules:1.3.0-rc03")
 
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0-rc03")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
 
-    androidTestImplementation("androidx.test.ext:junit:1.1.2-rc03")
-    androidTestImplementation ("androidx.test.ext:truth:1.3.0-rc03")
+    androidTestImplementation("androidx.test.ext:junit:1.1.2")
+    androidTestImplementation ("androidx.test.ext:truth:1.3.0")
     androidTestImplementation ("com.google.truth:truth:1.0.1")
     androidTestImplementation("com.google.truth.extensions:truth-java8-extension:1.0.1")
 
