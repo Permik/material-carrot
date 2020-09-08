@@ -189,8 +189,8 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean { // Handle item selection
         val builder: MaterialAlertDialogBuilder
         val alert: AlertDialog
-        val model: MainScreenViewModel by viewModels<MainScreenViewModel>()
-        val profileModel: ProfileViewModel by viewModels<ProfileViewModel>()
+        val model: MainScreenViewModel by viewModels()
+        val profileModel: ProfileViewModel by viewModels()
         return when (item.itemId) {
             R.id.action_add -> {
 

@@ -53,7 +53,9 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.3.0-alpha02")
     implementation("androidx.appcompat:appcompat-resources:1.3.0-alpha02")
 
-    implementation ("androidx.collection:collection-ktx:1.1.0")
+    implementation("androidx.collection:collection-ktx:1.1.0")
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0-alpha01")
 
     implementation("androidx.fragment:fragment-ktx:1.3.0-alpha08")
 
