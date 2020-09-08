@@ -2,26 +2,19 @@ package xyz.santtu.materialcarrot
 
 import android.app.Dialog
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.santtu.materialcarrot.databinding.AddProfileBinding
+import xyz.santtu.materialcarrotutils.formatAddHexReadability
+import xyz.santtu.materialcarrotutils.toHex
 import java.security.SecureRandom
-import java.util.*
 
 
 class AddProfileDialogFragment(): AppCompatDialogFragment(){
-    val prng: SecureRandom by lazy { SecureRandom.getInstance("SHA1PRNG") }
     private val ownModel: AddProfileFragmentViewModel by activityViewModels()
     private var _binding: AddProfileBinding? = null
     private val dialogBinding get() = _binding!!
@@ -70,7 +63,9 @@ class AddProfileDialogFragment(): AppCompatDialogFragment(){
     ): View? {
         ownModel.getProfileSecret().observe(this.requireActivity(), { randomBytes ->
             dialogBinding.profileSecret.text = String.format(
-                getString(R.string.secret_here)+ formatAddHexReadability(toHex(randomBytes))
+                getString(R.string.secret_here)+ formatAddHexReadability(
+                    toHex(randomBytes)
+                )
             ) })
         return super.onCreateView(inflater, container, savedInstanceState)
     }

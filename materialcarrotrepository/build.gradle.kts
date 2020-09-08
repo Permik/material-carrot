@@ -1,10 +1,9 @@
 
 plugins{
-    id("com.android.application")
+    id("com.android.library")
     kotlin("android")
     kotlin("android.extensions")
     kotlin("kapt")
-    id("org.jetbrains.dokka") version "1.4.0-rc"
 }
 
 android {
@@ -12,13 +11,13 @@ android {
     buildToolsVersion = "30.0.2"
 
     defaultConfig {
-        applicationId = "xyz.santtu.materialcarrot"
         minSdkVersion(23)
         targetSdkVersion(30)
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner("androidx.test.runner.AndroidJUnitRunner")
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -26,9 +25,6 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
-    }
-    buildFeatures{
-        viewBinding = true
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -44,18 +40,7 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation(project(mapOf("path" to ":materialcarrotrepository")))
     implementation(project(mapOf("path" to ":materialcarrotutils")))
-
-    implementation("androidx.core:core:1.5.0-alpha02")
-    implementation("androidx.core:core-ktx:1.5.0-alpha02")
-
-    implementation("androidx.appcompat:appcompat:1.3.0-alpha02")
-    implementation("androidx.appcompat:appcompat-resources:1.3.0-alpha02")
-
-    implementation ("androidx.collection:collection-ktx:1.1.0")
-
-    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha08")
 
     implementation("androidx.room:room-runtime:2.3.0-alpha02")
     implementation("androidx.room:room-ktx:2.3.0-alpha02")
@@ -66,13 +51,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha07")
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.0-alpha07")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-alpha07")
-
-    implementation("androidx.navigation:navigation-ui-ktx:2.3.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.3.0")
-
-    implementation("androidx.constraintlayout:constraintlayout:2.0.1")
-
-    implementation("com.google.android.material:material:1.2.1")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.8")
@@ -93,8 +71,4 @@ dependencies {
     androidTestImplementation("com.google.truth.extensions:truth-java8-extension:1.0.1")
 
     androidTestImplementation("androidx.room:room-testing:2.3.0-alpha02")
-}
-
-tasks.dokkaHtml {
-    outputDirectory = "$buildDir/dokka"
 }

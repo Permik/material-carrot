@@ -44,8 +44,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.santtu.materialcarrot.databinding.ActivityMainBinding
+import xyz.santtu.materialcarrotutils.toHex
+import xyz.santtu.materialcarrotrepository.Profile
+import xyz.santtu.materialcarrotrepository.ProfileViewModel
+import xyz.santtu.materialcarrotutils.generateOtp
 import java.time.Instant
 import kotlin.collections.ArrayList
+
 
 // TODO: Add change all dialogs to fragment dialogs to preserve their states on rotate.
 
@@ -56,7 +61,6 @@ class MainActivity : AppCompatActivity() {
     private var profileSelected = 0
     private var timeCountDownStart: Long = 0
     private var profilePin: String = ""
-    private var selectedProfileItem: String = ""
     private var allProfiles: List<Profile> = emptyList()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,11 +70,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
         val model: MainScreenViewModel by viewModels()
         val profileModel: ProfileViewModel by viewModels()
+
         model.getOnetimePassword().observe(this, { password -> binding.otpView.text = password })
         model.getUtcOffset().observe(this, { utcOffset -> binding.utcView.text = utcOffset})
         model.getSelectedProfile().observe(this, { profSelected -> profileSelected = profSelected })
-        model.getSelectedProfileString().observe(this,
-            { selectedProfString -> selectedProfileItem = selectedProfString })
         model.getCountdownStart().observe(this, { timeStart -> timeCountDownStart = timeStart
             if (timeStart != 0L) {
                 timeCountDownStart = countDownStart(timeStart)
@@ -89,8 +92,15 @@ class MainActivity : AppCompatActivity() {
         /// UI-bindings ///
         binding.buttonOk.setOnClickListener {
             Log.wtf("GenerateButton", allProfiles[profileSelected].profileName)
-            Log.wtf("GenerateButton", toHex(allProfiles[profileSelected].profileSecret))
-            model.setOnetimePassword(generateOtp(profilePin, toHex(allProfiles[profileSelected].profileSecret)))
+            Log.wtf("GenerateButton",
+                toHex(allProfiles[profileSelected].profileSecret)
+            )
+            model.setOnetimePassword(
+                generateOtp(
+                    profilePin,
+                    toHex(allProfiles[profileSelected].profileSecret)
+                )
+            )
             model.setCountdownStart(countDownStart(0))
             model.setCountdownStart(countDownStart(timeCountDownStart))
             binding.otpView.visibility = View.VISIBLE
@@ -107,8 +117,15 @@ class MainActivity : AppCompatActivity() {
             it.setOnEditorActionListener { textView, actionId, _ ->
                 if(actionId == EditorInfo.IME_ACTION_DONE && textView.text.length == 4){
                     Log.wtf("GenerateIMEButton", allProfiles[profileSelected].profileName)
-                    Log.wtf("GenerateIMEButton", toHex(allProfiles[profileSelected].profileSecret))
-                    model.setOnetimePassword(generateOtp(profilePin, toHex(allProfiles[profileSelected].profileSecret)))
+                    Log.wtf("GenerateIMEButton",
+                        toHex(allProfiles[profileSelected].profileSecret)
+                    )
+                    model.setOnetimePassword(
+                        generateOtp(
+                            profilePin,
+                            toHex(allProfiles[profileSelected].profileSecret)
+                        )
+                    )
                     model.setCountdownStart(countDownStart(0))
                     model.setCountdownStart(countDownStart(timeCountDownStart))
                     binding.otpView.visibility = View.VISIBLE
@@ -144,8 +161,6 @@ class MainActivity : AppCompatActivity() {
                 id: Long
             ) {
                 Log.wtf("test", binding.profileSelector.selectedItem as String)
-
-                model.setSelectedProfileString(binding.profileSelector.selectedItem as String)
                 model.setSelectedProfile(position)
                 if (position != profileSelected) { // The selected profile really has changed
                     clearSensitiveData()
@@ -157,7 +172,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         if (allProfiles.isEmpty() && menu != null){
-            menu.findItem(R.id.action_delete).setEnabled(false)
+            menu.findItem(R.id.action_delete).isEnabled = false
         }
         return true
     }
@@ -182,7 +197,13 @@ class MainActivity : AppCompatActivity() {
                 val addProfFragment = AddProfileDialogFragment()
                 addProfFragment.callback = object : AddProfileDialogFragment.SetOnPositiveListener{
                     override fun onAddProfile(name: String, secret: ByteArray) {
-                        profileModel.insert(Profile(0, name, secret))
+                        profileModel.insert(
+                            Profile(
+                                0,
+                                name,
+                                secret
+                            )
+                        )
                         populateProfileSpinner(model)
                     }
                 }
@@ -193,7 +214,13 @@ class MainActivity : AppCompatActivity() {
                 val addProfFragment = ImportProfileDialogFragment()
                 addProfFragment.callback = object : ImportProfileDialogFragment.SetOnPositiveListener{
                     override fun onAddProfile(name: String, secret: ByteArray) {
-                        profileModel.insert(Profile(0, name, secret))
+                        profileModel.insert(
+                            Profile(
+                                0,
+                                name,
+                                secret
+                            )
+                        )
                         populateProfileSpinner(model)
                     }
                 }

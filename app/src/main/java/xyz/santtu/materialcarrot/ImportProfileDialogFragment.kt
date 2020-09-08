@@ -2,23 +2,11 @@ package xyz.santtu.materialcarrot
 
 import android.app.Dialog
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import xyz.santtu.materialcarrot.databinding.AddProfileBinding
 import xyz.santtu.materialcarrot.databinding.ImportProfileBinding
+import xyz.santtu.materialcarrotutils.hexStringToByteArray
 import java.security.SecureRandom
-import java.util.*
 
 
 class ImportProfileDialogFragment(): AppCompatDialogFragment(){
