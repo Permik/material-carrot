@@ -11,20 +11,15 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.santtu.materialcarrot.databinding.AddProfileBinding
 import xyz.santtu.materialcarrotutils.formatAddHexReadability
 import xyz.santtu.materialcarrotutils.toHex
-import java.security.SecureRandom
 
 
-class AddProfileDialogFragment(): AppCompatDialogFragment(){
+class AddProfileDialogFragment: AppCompatDialogFragment(){
     private val ownModel: AddProfileFragmentViewModel by activityViewModels()
     private var _binding: AddProfileBinding? = null
     private val dialogBinding get() = _binding!!
     internal var callback: SetOnPositiveListener? = null
 
-    fun SetOnPositiveListener(callback: SetOnPositiveListener){
-        this.callback = callback
-    }
-
-    interface SetOnPositiveListener {
+    fun interface SetOnPositiveListener {
         fun onAddProfile(name:String, secret: ByteArray)
     }
 

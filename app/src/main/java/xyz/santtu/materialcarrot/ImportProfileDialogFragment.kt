@@ -15,11 +15,7 @@ class ImportProfileDialogFragment(): AppCompatDialogFragment(){
     private val dialogBinding get() = _binding!!
     internal var callback: SetOnPositiveListener? = null
 
-    fun SetOnPositiveListener(callback: SetOnPositiveListener){
-        this.callback = callback
-    }
-
-    interface SetOnPositiveListener {
+    fun interface SetOnPositiveListener {
         fun onAddProfile(name:String, secret: ByteArray)
     }
 
