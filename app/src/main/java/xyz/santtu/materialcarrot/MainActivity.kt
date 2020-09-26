@@ -195,8 +195,8 @@ class MainActivity : AppCompatActivity() {
             R.id.action_add -> {
 
                 val addProfFragment = AddProfileDialogFragment()
-                addProfFragment.callback = object : AddProfileDialogFragment.SetOnPositiveListener{
-                    override fun onAddProfile(name: String, secret: ByteArray) {
+                addProfFragment.callback =
+                    AddProfileDialogFragment.SetOnPositiveListener { name, secret ->
                         profileModel.insert(
                             Profile(
                                 0,
@@ -206,14 +206,13 @@ class MainActivity : AppCompatActivity() {
                         )
                         populateProfileSpinner(model)
                     }
-                }
                 addProfFragment.show(supportFragmentManager, "AddProfile")
                 true
             }
             R.id.action_import -> {
                 val addProfFragment = ImportProfileDialogFragment()
-                addProfFragment.callback = object : ImportProfileDialogFragment.SetOnPositiveListener{
-                    override fun onAddProfile(name: String, secret: ByteArray) {
+                addProfFragment.callback =
+                    ImportProfileDialogFragment.SetOnPositiveListener { name, secret ->
                         profileModel.insert(
                             Profile(
                                 0,
@@ -223,7 +222,6 @@ class MainActivity : AppCompatActivity() {
                         )
                         populateProfileSpinner(model)
                     }
-                }
                 addProfFragment.show(supportFragmentManager, "ImportProfile")
                 true
             }
