@@ -50,8 +50,8 @@ dependencies {
     implementation(project(mapOf("path" to ":materialcarrotrepository")))
     implementation(project(mapOf("path" to ":materialcarrotutils")))
 
-    implementation("androidx.core:core:1.5.0-alpha02")
-    implementation("androidx.core:core-ktx:1.5.0-alpha02")
+    implementation("androidx.core:core:1.5.0-alpha04")
+    implementation("androidx.core:core-ktx:1.5.0-alpha04")
 
     implementation("androidx.appcompat:appcompat:1.3.0-alpha02")
     implementation("androidx.appcompat:appcompat-resources:1.3.0-alpha02")
@@ -60,17 +60,17 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.0.0-alpha01")
 
-    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha08")
+    implementation("androidx.fragment:fragment-ktx:1.3.0-beta01")
 
     implementation("androidx.room:room-runtime:2.3.0-alpha02")
     implementation("androidx.room:room-ktx:2.3.0-alpha02")
     kapt("androidx.room:room-compiler:2.3.0-alpha02")
 
-    implementation("androidx.lifecycle:lifecycle-livedata-core-ktx:2.3.0-alpha07")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha07")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha07")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.0-alpha07")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-alpha07")
+    implementation("androidx.lifecycle:lifecycle-livedata-core-ktx:2.3.0-beta01")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-beta01")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-beta01")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.0-beta01")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-beta01")
 
     implementation("androidx.navigation:navigation-ui-ktx:2.3.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.0")
