@@ -43,14 +43,17 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation("androidx.core:core:1.5.0-alpha02")
+    implementation(project(mapOf("path" to ":materialcarrotrepository")))
+    implementation(project(mapOf("path" to ":materialcarrotutils")))
+
+    implementation("androidx.core:core:1.5.0-alpha04")
     implementation("androidx.core:core-ktx:1.5.0-alpha02")
 
     implementation("androidx.appcompat:appcompat:1.3.0-alpha02")
     implementation("androidx.appcompat:appcompat-resources:1.3.0-alpha02")
 
     implementation("androidx.activity:activity:1.2.0-alpha08")
-    implementation("androidx.activity:activity-ktx:1.2.0-alpha08")
+    implementation("androidx.activity:activity-ktx:1.2.0-beta01")
 
     implementation("androidx.fragment:fragment:1.3.0-alpha08")
     implementation("androidx.fragment:fragment-ktx:1.3.0-alpha08")

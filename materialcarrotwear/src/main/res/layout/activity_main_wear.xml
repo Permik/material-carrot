@@ -1,51 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.wear.widget.drawer.WearableDrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    android:padding="@dimen/box_inset_layout_padding"
-    android:theme="@style/AppTheme"
-    app:boxedEdges="all"
-    tools:context=".MainWearActivity"
-    tools:deviceIds="wear">
-    <androidx.wear.widget.CircularProgressLayout
-        android:id="@+id/progress_circular"
+    android:background="@color/black">
+    <androidx.wear.widget.BoxInsetLayout
+        android:id="@+id/content_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/inner_frame_layout_padding">
-        <LinearLayout
+        android:padding="10dp"
+        android:theme="@style/AppTheme"
+        app:boxedEdges="all"
+        tools:context=".MainWearActivity"
+        tools:deviceIds="wear">
+        <androidx.wear.widget.CircularProgressLayout
+            android:id="@+id/progress_circular"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="@dimen/inner_frame_layout_padding"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:padding="@dimen/inner_frame_layout_padding">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/inner_frame_layout_padding"
+                android:orientation="vertical"
+                android:gravity="center">
 
-            <TextView
-                android:id="@+id/text"
-                style="@style/TextAppearance.WearDiag.Title"
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name" />
+                <TextView
+                    android:id="@+id/text"
+                    style="@style/TextAppearance.WearDiag.Title"
+                    android:textColor="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name" />
 
-            <TextView
-                android:id="@+id/code"
-                style="@style/TextAppearance.AppCompat.Large"
-                android:textColor="@color/white"
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/pin_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:src="@drawable/ic_numpad"
-                android:contentDescription="Opens the pin input dialog" />
+                <TextView
+                    android:id="@+id/code"
+                    style="@style/TextAppearance.AppCompat.Large"
+                    android:textColor="@color/white"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/pin_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/ic_numpad"
+                    android:contentDescription="Opens the pin input dialog" />
 
-        </LinearLayout>
-    </androidx.wear.widget.CircularProgressLayout>
+            </LinearLayout>
+        </androidx.wear.widget.CircularProgressLayout>
 
-</androidx.wear.widget.BoxInsetLayout>
+    </androidx.wear.widget.BoxInsetLayout>
+    <androidx.wear.widget.drawer.WearableNavigationDrawerView
+        android:id="@+id/top_navigation_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/grey"
+        app:navigationStyle="multiPage" />
+
+</androidx.wear.widget.drawer.WearableDrawerLayout>

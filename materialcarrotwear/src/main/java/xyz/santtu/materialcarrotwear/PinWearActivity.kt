@@ -3,13 +3,10 @@ package xyz.santtu.materialcarrotwear
 import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentActivity
 import androidx.wear.ambient.AmbientModeSupport
-import xyz.santtu.materialcarrotwear.databinding.ActivityMainWearBinding
 import xyz.santtu.materialcarrotwear.databinding.PinInputBinding
 
 const val PIN_CODE_ENTER = "xyz.permik.materialcarrotwear.PIN_CODE"
@@ -20,6 +17,8 @@ class PinWearActivity : FragmentActivity(), AmbientModeSupport.AmbientCallbackPr
     private lateinit var ambientController: AmbientModeSupport.AmbientController
     lateinit var pinOrigColor: ColorStateList
     lateinit var circleOrigColor: IntArray
+    private var isLowBitAmbient: Boolean = false
+    private var doBurnInProtection: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +26,8 @@ class PinWearActivity : FragmentActivity(), AmbientModeSupport.AmbientCallbackPr
         val view = binding.root
         setContentView(view)
 
-        binding.pinOk.setOnClickListener { view -> pinOk(view) }
-        binding.pinCancel.setOnClickListener { view -> pinCancel(view) }
+        binding.pinOk.setOnClickListener { okButton -> pinOk(okButton) }
+        binding.pinCancel.setOnClickListener { cancelButton -> pinCancel(cancelButton) }
         // Enables Always-on
         ambientController = AmbientModeSupport.attach(this)
     }
@@ -57,7 +56,10 @@ class PinWearActivity : FragmentActivity(), AmbientModeSupport.AmbientCallbackPr
     inner class MyAmbientCallback : AmbientModeSupport.AmbientCallback() {
 
         override fun onEnterAmbient(ambientDetails: Bundle?) {
-            super.onEnterAmbient(ambientDetails);
+            super.onEnterAmbient(ambientDetails)
+            ambientDetails?.getBoolean(AmbientModeSupport.EXTRA_LOWBIT_AMBIENT) ?: isLowBitAmbient
+            ambientDetails?.getBoolean(AmbientModeSupport.EXTRA_BURN_IN_PROTECTION) ?: doBurnInProtection
+
 
         }
 
