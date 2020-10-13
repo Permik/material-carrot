@@ -1,10 +1,15 @@
+buildscript {
+    dependencies{
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.4.10")
+    }
+}
 
 plugins{
     id("com.android.application")
     kotlin("android")
     kotlin("android.extensions")
     kotlin("kapt")
-    id("org.jetbrains.dokka") version "1.4.0-rc"
+    id("org.jetbrains.dokka") version "1.4.10"
 }
 
 android {
@@ -79,8 +84,8 @@ dependencies {
 
     implementation("com.google.android.material:material:1.2.1")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
 
     testImplementation("junit:junit:4.13")
 
@@ -100,6 +105,10 @@ dependencies {
     androidTestImplementation("androidx.room:room-testing:2.3.0-alpha02")
 }
 
-tasks.dokkaHtml {
-    outputDirectory = "$buildDir/dokka"
+tasks.dokkaHtml.configure {
+    dokkaSourceSets {
+        named("main") {
+            noAndroidSdkLink.set(false)
+        }
+    }
 }

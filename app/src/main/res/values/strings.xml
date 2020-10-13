@@ -20,5 +20,6 @@
     <string name="profile_enter_secret">Enter secret</string>
     <string name="profile_import">Import profile</string>
     <string name="title_activity_import_profile">Import Profile</string>
+    <string name="profile_enter_secret_hint">Allowed characters: \"0123456789abcdef\"</string>
 
 </resources>

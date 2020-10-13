@@ -44,12 +44,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.santtu.materialcarrot.databinding.ActivityMainBinding
-import xyz.santtu.materialcarrotutils.toHex
 import xyz.santtu.materialcarrotrepository.Profile
 import xyz.santtu.materialcarrotrepository.ProfileViewModel
 import xyz.santtu.materialcarrotutils.generateOtp
+import xyz.santtu.materialcarrotutils.toHex
 import java.time.Instant
-import kotlin.collections.ArrayList
 
 
 // TODO: Add change all dialogs to fragment dialogs to preserve their states on rotate.
@@ -72,27 +71,27 @@ class MainActivity : AppCompatActivity() {
         val profileModel: ProfileViewModel by viewModels()
 
         model.getOnetimePassword().observe(this, { password -> binding.otpView.text = password })
-        model.getUtcOffset().observe(this, { utcOffset -> binding.utcView.text = utcOffset})
+        model.getUtcOffset().observe(this, { utcOffset -> binding.utcView.text = utcOffset })
         model.getSelectedProfile().observe(this, { profSelected -> profileSelected = profSelected })
-        model.getCountdownStart().observe(this, { timeStart -> timeCountDownStart = timeStart
+        model.getCountdownStart().observe(this, { timeStart ->
+            timeCountDownStart = timeStart
             if (timeStart != 0L) {
                 timeCountDownStart = countDownStart(timeStart)
                 binding.otpView.visibility = View.VISIBLE
             }
         })
         model.getPasswordPin().observe(this, { pin -> profilePin = pin })
-        profileModel.allProfiles.observe(this, {
-                profileList -> allProfiles = profileList
+        profileModel.allProfiles.observe(this, { profileList ->
+            allProfiles = profileList
             populateProfileSpinner(model)
-            if (profileList.isEmpty()){
-                invalidateOptionsMenu()
-            }
+            invalidateOptionsMenu()
         })
 
         /// UI-bindings ///
         binding.buttonOk.setOnClickListener {
             Log.wtf("GenerateButton", allProfiles[profileSelected].profileName)
-            Log.wtf("GenerateButton",
+            Log.wtf(
+                "GenerateButton",
                 toHex(allProfiles[profileSelected].profileSecret)
             )
             model.setOnetimePassword(
@@ -110,14 +109,15 @@ class MainActivity : AppCompatActivity() {
             it.doOnTextChanged(action = { text, _, _, _ ->
                 if (text?.length == 4) {
                     model.setPasswordPin((text as SpannableStringBuilder).toString())
-                } else{
+                } else {
                     model.setPasswordPin("")
                 }
             })
             it.setOnEditorActionListener { textView, actionId, _ ->
                 if(actionId == EditorInfo.IME_ACTION_DONE && textView.text.length == 4){
                     Log.wtf("GenerateIMEButton", allProfiles[profileSelected].profileName)
-                    Log.wtf("GenerateIMEButton",
+                    Log.wtf(
+                        "GenerateIMEButton",
                         toHex(allProfiles[profileSelected].profileSecret)
                     )
                     model.setOnetimePassword(
@@ -131,7 +131,11 @@ class MainActivity : AppCompatActivity() {
                     binding.otpView.visibility = View.VISIBLE
                     false
                 } else {
-                    Toast.makeText(applicationContext, "Pin needs to be 4 digits long!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        applicationContext,
+                        "Pin needs to be 4 digits long!",
+                        Toast.LENGTH_LONG
+                    ).show()
                     true
                 }
             }
@@ -146,7 +150,15 @@ class MainActivity : AppCompatActivity() {
                         (binding.enterPin.editText!!.text.toString().length == 4
                                 && allProfiles.isNotEmpty())
                 }
-                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+                override fun beforeTextChanged(
+                    s: CharSequence,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
                 override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             })
 
@@ -172,6 +184,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         if (allProfiles.isEmpty() && menu != null){
+            menu.findItem(R.id.action_delete).isVisible = false
             menu.findItem(R.id.action_delete).isEnabled = false
         }
         return true

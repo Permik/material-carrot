@@ -7,11 +7,7 @@ import androidx.lifecycle.ViewModel
 import xyz.santtu.materialcarrotutils.utcOffset
 
 
-const val OTP_PASSWORD_KEY = "otpPasswordKey"
-const val OTP_PASSWORD_PIN_KEY = "otpPasswordPinKey"
-const val COUNTDOWN_START_KEY = "countdownStartKey"
-const val SELECTED_PROFILE_KEY = "selectedProfileKey"
-const val UTC_OFFSET_KEY = "utcOffsetKey"
+
 class MainScreenViewModel(private val state: SavedStateHandle) : ViewModel() {
 
 
@@ -42,3 +38,8 @@ class MainScreenViewModel(private val state: SavedStateHandle) : ViewModel() {
             }
         }
 }
+const val OTP_PASSWORD_KEY = "otpPasswordKey"
+const val OTP_PASSWORD_PIN_KEY = "otpPasswordPinKey"
+const val COUNTDOWN_START_KEY = "countdownStartKey"
+const val SELECTED_PROFILE_KEY = "selectedProfileKey"
+const val UTC_OFFSET_KEY = "utcOffsetKey"

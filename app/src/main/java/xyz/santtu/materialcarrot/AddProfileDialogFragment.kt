@@ -57,11 +57,8 @@ class AddProfileDialogFragment: AppCompatDialogFragment(){
         savedInstanceState: Bundle?
     ): View? {
         ownModel.getProfileSecret().observe(this.requireActivity(), { randomBytes ->
-            dialogBinding.profileSecret.text = String.format(
-                getString(R.string.secret_here)+ formatAddHexReadability(
-                    toHex(randomBytes)
-                )
-            ) })
+            dialogBinding.profileSecret.text = formatAddHexReadability(toHex(randomBytes))
+        })
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
