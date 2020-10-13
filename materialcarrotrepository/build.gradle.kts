@@ -1,9 +1,15 @@
+buildscript {
+    dependencies{
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.4.10")
+    }
+}
 
 plugins{
     id("com.android.library")
     kotlin("android")
     kotlin("android.extensions")
     kotlin("kapt")
+    id("org.jetbrains.dokka") version "1.4.10"
 }
 
 android {
@@ -71,4 +77,12 @@ dependencies {
     androidTestImplementation("com.google.truth.extensions:truth-java8-extension:1.0.1")
 
     androidTestImplementation("androidx.room:room-testing:2.3.0-alpha02")
+}
+
+tasks.dokkaHtml.configure {
+    dokkaSourceSets {
+        named("main") {
+            noAndroidSdkLink.set(false)
+        }
+    }
 }
