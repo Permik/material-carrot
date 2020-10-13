@@ -84,7 +84,7 @@ fun toHex(hashValue: ByteArray): String {
  *
  * "0123456789abcdef"
  */
-private val HEX_CHARS = "0123456789abcdef"
+private const val HEX_CHARS = "0123456789abcdef"
 
 /**
  * Converts [String]s to [ByteArray]s
@@ -105,6 +105,11 @@ fun String.hexStringToByteArray() : ByteArray {
     }
 
     return result
+}
+
+fun Char.isHex(): Boolean{
+    this.toLowerCase()
+    return HEX_CHARS.contains(this)
 }
 
 /**
