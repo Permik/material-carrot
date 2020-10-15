@@ -26,7 +26,7 @@ class MainStateRepository(context: Context) {
 
     private val dataStore: DataStore<Preferences> = context.createDataStore("main_state")
 
-    val MainStateFlow: Flow<MainState> = dataStore.data
+    private val safeFlow: Flow<Preferences> = dataStore.data
         .catch { exeption ->
             if (exeption is IOException){
                 emit(emptyPreferences())
@@ -34,6 +34,8 @@ class MainStateRepository(context: Context) {
                 throw exeption
             }
         }
+
+    val MainStateFlow: Flow<MainState> = safeFlow
         .map { state ->
             val password = state[StateKeys.PASSWORD]?: ""
             val pin = state[StateKeys.PIN]?: ""
@@ -41,6 +43,22 @@ class MainStateRepository(context: Context) {
             val selectedProfile = state[StateKeys.SELECTED_PROFILE]?: 0
             MainState(password, pin, countdownStart, selectedProfile)
         }
+
+    val passwordFlow: Flow<String> = safeFlow.map { state ->
+        state[StateKeys.PASSWORD]?: ""
+    }
+
+    val pinFlow: Flow<String> = safeFlow.map { state ->
+        state[StateKeys.PIN]?: ""
+    }
+
+    val countdownStartFlow: Flow<Long> = safeFlow.map { state ->
+        state[StateKeys.COUNTDOWN_START]?: 0
+    }
+
+    val selectedProfileFlow: Flow<Int> = safeFlow.map { state ->
+        state[StateKeys.SELECTED_PROFILE]?: 0
+    }
 
     suspend fun updatePassword(password: String){
         dataStore.edit { state ->
@@ -64,6 +82,13 @@ class MainStateRepository(context: Context) {
         dataStore.edit { state ->
             state[StateKeys.SELECTED_PROFILE] = selectedProfile
         }
+    }
+
+    suspend fun updateMainState(mainState: MainState){
+        updatePassword(mainState.password)
+        updatePin(mainState.pin)
+        updateCountdownStart(mainState.countdownStart)
+        updateSelectedProfile(mainState.selectedProfile)
     }
 }
 

@@ -19,36 +19,20 @@
 </markus> */
 package xyz.santtu.materialcarrot
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.os.Bundle
-import android.os.CountDownTimer
-import android.text.Editable
 import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.TextWatcher
 import android.text.util.Linkify
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.doOnTextChanged
+import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.santtu.materialcarrot.databinding.ActivityMainBinding
 import xyz.santtu.materialcarrotrepository.Profile
 import xyz.santtu.materialcarrotrepository.ProfileViewModel
-import xyz.santtu.materialcarrotutils.generateOtp
-import xyz.santtu.materialcarrotutils.toHex
-import java.time.Instant
 
 
 // TODO: Add change all dialogs to fragment dialogs to preserve their states on rotate.
@@ -56,10 +40,7 @@ import java.time.Instant
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private var timeout: CountDownTimer? = null
     private var profileSelected = 0
-    private var timeCountDownStart: Long = 0
-    private var profilePin: String = ""
     private var allProfiles: List<Profile> = emptyList()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,119 +48,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        val model: MainScreenViewModel by viewModels()
+        setSupportActionBar(binding.topAppBar)
         val profileModel: ProfileViewModel by viewModels()
 
-        model.getOnetimePassword().observe(this, { password -> binding.otpView.text = password })
-        model.getUtcOffset().observe(this, { utcOffset -> binding.utcView.text = utcOffset })
-        model.getSelectedProfile().observe(this, { profSelected -> profileSelected = profSelected })
-        model.getCountdownStart().observe(this, { timeStart ->
-            timeCountDownStart = timeStart
-            if (timeStart != 0L) {
-                timeCountDownStart = countDownStart(timeStart)
-                binding.otpView.visibility = View.VISIBLE
-            }
-        })
-        model.getPasswordPin().observe(this, { pin -> profilePin = pin })
-        profileModel.allProfiles.observe(this, { profileList ->
-            allProfiles = profileList
-            populateProfileSpinner(model)
-            invalidateOptionsMenu()
-        })
+        profileModel.allProfiles.observe(this, { profileList -> allProfiles = profileList
+            invalidateOptionsMenu() })
 
-        /// UI-bindings ///
-        binding.buttonOk.setOnClickListener {
-            Log.wtf("GenerateButton", allProfiles[profileSelected].profileName)
-            Log.wtf(
-                "GenerateButton",
-                toHex(allProfiles[profileSelected].profileSecret)
-            )
-            model.setOnetimePassword(
-                generateOtp(
-                    profilePin,
-                    toHex(allProfiles[profileSelected].profileSecret)
-                )
-            )
-            model.setCountdownStart(countDownStart(0))
-            model.setCountdownStart(countDownStart(timeCountDownStart))
-            binding.otpView.visibility = View.VISIBLE
-        }
-        binding.otpView.setOnClickListener { otpView -> copyToClipboard(otpView as TextView?) }
-        binding.enterPin.editText?.let {
-            it.doOnTextChanged(action = { text, _, _, _ ->
-                if (text?.length == 4) {
-                    model.setPasswordPin((text as SpannableStringBuilder).toString())
-                } else {
-                    model.setPasswordPin("")
-                }
-            })
-            it.setOnEditorActionListener { textView, actionId, _ ->
-                if(actionId == EditorInfo.IME_ACTION_DONE && textView.text.length == 4){
-                    Log.wtf("GenerateIMEButton", allProfiles[profileSelected].profileName)
-                    Log.wtf(
-                        "GenerateIMEButton",
-                        toHex(allProfiles[profileSelected].profileSecret)
-                    )
-                    model.setOnetimePassword(
-                        generateOtp(
-                            profilePin,
-                            toHex(allProfiles[profileSelected].profileSecret)
-                        )
-                    )
-                    model.setCountdownStart(countDownStart(0))
-                    model.setCountdownStart(countDownStart(timeCountDownStart))
-                    binding.otpView.visibility = View.VISIBLE
-                    false
-                } else {
-                    Toast.makeText(
-                        applicationContext,
-                        "Pin needs to be 4 digits long!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    true
-                }
-            }
-            it.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(s: Editable) {
-                    /**
-                     * checking profileTree.isEmpty() to work around a bug in older
-                     * versions of Android where enterPin.enable(false) has no
-                     * effect.
-                     */
-                    binding.buttonOk.isEnabled =
-                        (binding.enterPin.editText!!.text.toString().length == 4
-                                && allProfiles.isNotEmpty())
-                }
-
-                override fun beforeTextChanged(
-                    s: CharSequence,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                }
-
-                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-            })
-
-        }
-        binding.profileSelector.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                Log.wtf("test", binding.profileSelector.selectedItem as String)
-                model.setSelectedProfile(position)
-                if (position != profileSelected) { // The selected profile really has changed
-                    clearSensitiveData()
-                }
-            }
-        }
-        populateProfileSpinner(model)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
@@ -202,40 +76,16 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean { // Handle item selection
         val builder: MaterialAlertDialogBuilder
         val alert: AlertDialog
-        val model: MainScreenViewModel by viewModels()
         val profileModel: ProfileViewModel by viewModels()
         return when (item.itemId) {
             R.id.action_add -> {
-
-                val addProfFragment = AddProfileDialogFragment()
-                addProfFragment.callback =
-                    AddProfileDialogFragment.SetOnPositiveListener { name, secret ->
-                        profileModel.insert(
-                            Profile(
-                                0,
-                                name,
-                                secret
-                            )
-                        )
-                        populateProfileSpinner(model)
-                    }
-                addProfFragment.show(supportFragmentManager, "AddProfile")
+                binding.navHostFragment.findNavController()
+                    .navigate(CodeFragmentDirections.actionCodeFragment2ToAddProfileDialogFragment())
                 true
             }
             R.id.action_import -> {
-                val addProfFragment = ImportProfileDialogFragment()
-                addProfFragment.callback =
-                    ImportProfileDialogFragment.SetOnPositiveListener { name, secret ->
-                        profileModel.insert(
-                            Profile(
-                                0,
-                                name,
-                                secret
-                            )
-                        )
-                        populateProfileSpinner(model)
-                    }
-                addProfFragment.show(supportFragmentManager, "ImportProfile")
+                binding.navHostFragment.findNavController()
+                    .navigate(CodeFragmentDirections.actionCodeFragment2ToImportProfileDialogFragment())
                 true
             }
             R.id.action_delete -> {
@@ -256,8 +106,6 @@ class MainActivity : AppCompatActivity() {
                         // Remove the currently selected profile
                         Log.i("yes", allProfiles[profileSelected].toString())
                         profileModel.delete(allProfiles[profileSelected])
-                        clearSensitiveData()
-                        populateProfileSpinner(model)
                     }
                 alert = builder.create()
                 alert.show()
@@ -276,107 +124,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Populate the profileSpinner, and select the correct profile
-     */
-    fun populateProfileSpinner(model: MainScreenViewModel): Int {
-        val profileList: ArrayList<String>
-        if (allProfiles.isNullOrEmpty()) {
-            profileList = ArrayList()
-            profileList.add("(no profile)")
-        } else {
-            profileList = allProfiles.map { it.profileName } as ArrayList<String>
-        }
-        val aa = ArrayAdapter(
-            this,
-            R.layout.support_simple_spinner_dropdown_item, ArrayList(profileList)
-        )
-        // Specify the layout to use when the list of choices appears
-        aa.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item)
-        // Apply the adapter to the spinner
-        binding.profileSelector.adapter = aa
-        // Log.i("setSelectedProfile", "Set the currently selected profile");
-        if (!allProfiles.isNullOrEmpty()){
-            profileSelected =
-                if (profileSelected == profileList.size) profileSelected - 1 else profileSelected
-            profileSelected = if (profileSelected < 0) 0 else profileSelected
-            model.setSelectedProfile(profileSelected)
-        }
-        // Disable pin-entry, delete-button, and profilespinner.
-        // if there are no profiles.
-        if (allProfiles.isNullOrEmpty()) {
-            binding.enterPin.isEnabled = false
-            binding.profileSelector.isEnabled = false
-        } else {
-            binding.profileSelector.setSelection(profileSelected)
-            binding.enterPin.isEnabled = true
-            binding.profileSelector.isEnabled = true
-        }
-        return profileSelected
-    }
 
-    /**
-     * Copy the current one-time-password to the clipboard. This is a callback
-     * for onclick on the password TextView.
-     *
-     * @param view
-     */
-    fun copyToClipboard(view: TextView?) { // Gets a handle to the clipboard service.
-        val cm = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
-        val otpClip = ClipData.newPlainText("text", view?.text.toString())
-        cm?.primaryClip?.addItem(otpClip.getItemAt(0))
-        Toast.makeText(
-            this, "One-time-password copied to clipboard",
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    /**
-     * Start the countdown timer after the otp has been generated. When the
-     * timer runs down, all sensitive fields are cleared.
-     */
-    fun countDownStart(timeStart: Long): Long { // Log.i("countDownStart", "Start the countdown.");
-        try {
-            timeout!!.cancel()
-        } catch (e: NullPointerException) { // ignore
-        }
-        var timecdStart = Instant.now().toEpochMilli()
-        var secondsLeft = 60
-        if (timeStart != 0L) {
-            // Resume the timer, likely after a screen rotate.
-            // Adjust values accordingly
-            secondsLeft = (60 - (timecdStart - timeStart) / 1000).toInt()
-            timecdStart = timeStart
-        }
-        binding.progressBar.progress = secondsLeft * 2
-        timeout = object : CountDownTimer((secondsLeft * 1000).toLong(), 500) {
-            override fun onTick(millisUntilFinished: Long) {
-                binding.progressBar.progress = millisUntilFinished.toInt() / 500
-            }
-
-            override fun onFinish() { // Log.i("onFinish", "Countdown timer has finished");
-                clearSensitiveData()
-            }
-        }.start()
-        binding.progressBar.visibility = View.VISIBLE
-        return timecdStart
-    }
-
-    /**
-     * Clear all fields of sensitive data.
-     *
-     */
-    fun clearSensitiveData() {
-        // Log.i("clearSensitiveData",
-        // "wipe pin, current otp, countdownbar, etc.");
-        binding.enterPin.editText?.setText("")
-        binding.otpView.text = ""
-        binding.otpView.visibility = View.INVISIBLE
-        binding.progressBar.visibility = View.INVISIBLE
-        timeCountDownStart = 0L
-        try {
-            timeout!!.cancel()
-        } catch (e: NullPointerException) { // ignore
-        }
-    }
 }

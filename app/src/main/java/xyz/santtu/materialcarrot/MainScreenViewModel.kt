@@ -1,41 +1,58 @@
 package xyz.santtu.materialcarrot
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.util.Log
+import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 import xyz.santtu.materialcarrotutils.utcOffset
 
 
 
-class MainScreenViewModel(private val state: SavedStateHandle) : ViewModel() {
+class MainScreenViewModel(application: Application) : AndroidViewModel(
+    application
+) {
+    private lateinit var repository: MainStateRepository
+    init {
+        viewModelScope.launch {
+            repository = MainStateRepository(application)
+        }
+    }
+        fun setup() {
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.MainStateFlow.take(1).collect {value ->  repository.updateMainState(value) }
+            }
+        }
 
+        val mainState = repository.MainStateFlow.asLiveData(viewModelScope.coroutineContext + Dispatchers.IO)
 
+        fun getOnetimePassword(): LiveData<String> = repository.passwordFlow.asLiveData(viewModelScope.coroutineContext + Dispatchers.IO)
+        fun setOnetimePassword(value: String) = viewModelScope.launch(Dispatchers.IO){
+            repository.updatePassword(value)
+        }
 
-//    var onetimePassword: MutableLiveData<String>
-
-        fun getOnetimePassword(): MutableLiveData<String> = state.getLiveData(OTP_PASSWORD_KEY, "")
-        fun setOnetimePassword(value: String): Unit = state.set(OTP_PASSWORD_KEY, value)
-
-        fun getPasswordPin(): MutableLiveData<String> = state.getLiveData(OTP_PASSWORD_PIN_KEY, "")
-        fun setPasswordPin(value: String): Unit = state.set(OTP_PASSWORD_PIN_KEY, value)
+        val passwordPin: LiveData<String> = repository.pinFlow.asLiveData(viewModelScope.coroutineContext + Dispatchers.IO)
+        fun setPasswordPin(value: String) = viewModelScope.launch(Dispatchers.IO){
+            repository.updatePin(value)
+        }
 
 //    var countdownStart: MutableLiveData<Long>
-        fun getCountdownStart(): MutableLiveData<Long> = state.getLiveData(COUNTDOWN_START_KEY, 0)
-        fun setCountdownStart(value: Long): Unit  = state.set(COUNTDOWN_START_KEY, value)
+        fun getCountdownStart(): LiveData<Long> = repository.countdownStartFlow.asLiveData(viewModelScope.coroutineContext + Dispatchers.IO)
+        fun setCountdownStart(value: Long)= viewModelScope.launch(Dispatchers.IO){
+            repository.updateCountdownStart(value)
+        }
 
 //    var selectedProfile: MutableLiveData<Int>
-        fun getSelectedProfile(): MutableLiveData<Int> = state.getLiveData(SELECTED_PROFILE_KEY, 0)
-        fun setSelectedProfile(value: Int): Unit  = state.set(SELECTED_PROFILE_KEY, value)
+        val selectedProfile: LiveData<Int> = repository.selectedProfileFlow.asLiveData(viewModelScope.coroutineContext + Dispatchers.IO)
+        fun setSelectedProfile(value: Int) = viewModelScope.launch(Dispatchers.IO){
+            repository.updateSelectedProfile(value)
+        }
 
-        fun getUtcOffset(): LiveData<String> {
-            val offset: LiveData<String> = state.getLiveData(UTC_OFFSET_KEY)
-            return if (offset.value.isNullOrEmpty()){
-                state.set(UTC_OFFSET_KEY, utcOffset())
-                offset
-            }else{
-                offset
-            }
+        val utcOffset: LiveData<String> = liveData {
+            emit(utcOffset())
         }
 }
 const val OTP_PASSWORD_KEY = "otpPasswordKey"

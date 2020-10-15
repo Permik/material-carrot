@@ -9,6 +9,7 @@ plugins{
     kotlin("android")
     kotlin("android.extensions")
     kotlin("kapt")
+    id("androidx.navigation.safeargs.kotlin")
     id("org.jetbrains.dokka") version "1.4.10"
 }
 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/codeFragment2">
+    <fragment
+        android:id="@+id/codeFragment2"
+        android:name="xyz.santtu.materialcarrot.CodeFragment"
+        android:label="CodeFragment"
+        tools:layout="@layout/code_generation" >
+        <action
+            android:id="@+id/action_codeFragment2_to_addProfileDialogFragment"
+            app:destination="@id/addProfileDialogFragment" />
+        <action
+            android:id="@+id/action_codeFragment2_to_importProfileDialogFragment"
+            app:destination="@id/importProfileDialogFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/addProfileDialogFragment"
+        android:name="xyz.santtu.materialcarrot.AddProfileDialogFragment"
+        android:label="AddProfileDialogFragment"
+        tools:layout="@layout/add_profile" >
+        <action
+            android:id="@+id/action_addProfileDialogFragment_to_codeFragment2"
+            app:destination="@id/codeFragment2" />
+    </dialog>
+    <dialog
+        android:id="@+id/importProfileDialogFragment"
+        android:name="xyz.santtu.materialcarrot.ImportProfileDialogFragment"
+        android:label="ImportProfileDialogFragment"
+        tools:layout="@layout/import_profile" >
+        <action
+            android:id="@+id/action_importProfileDialogFragment_to_codeFragment2"
+            app:destination="@id/codeFragment2" />
+    </dialog>
+
+</navigation>
