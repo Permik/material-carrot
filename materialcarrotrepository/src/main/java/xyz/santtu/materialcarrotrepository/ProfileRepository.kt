@@ -1,6 +1,8 @@
 package xyz.santtu.materialcarrotrepository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Repository of profiles.
@@ -14,7 +16,7 @@ class ProfileRepository(private val profileDao: ProfileDao){
      * Gets a list in a Livedata that room updates whenever there's a change in the database
      * @return [LiveData] that contains a [List] of [Profile]
      */
-    fun allProfiles(): LiveData<List<Profile>> {
+    fun allProfiles(): Flow<List<Profile>> {
         return profileDao.observeProfiles()
     }
 

@@ -2,12 +2,13 @@ package xyz.santtu.materialcarrotrepository
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProfileDao {
 
     @Query("SELECT * from profile_table")
-    fun observeProfiles(): LiveData<List<Profile>>
+    fun observeProfiles(): Flow<List<Profile>>
 
     @Query("SELECT * from profile_table")
     fun getProfiles(): List<Profile>

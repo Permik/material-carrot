@@ -3,19 +3,21 @@ package xyz.santtu.materialcarrotrepository
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(application: Application): AndroidViewModel(application){
-    private val repository: ProfileRepository
-
-    val allProfiles: LiveData<List<Profile>>
+    private lateinit var repository: ProfileRepository
+    lateinit var allProfiles: LiveData<List<Profile>>
 
     init {
-        val profilesDao = ProfileRoomDatabase.getDatabase(application, viewModelScope).profileDao()
-        repository = ProfileRepository(profilesDao)
-        allProfiles = repository.allProfiles()
+        viewModelScope.launch {
+            val profilesDao = ProfileRoomDatabase.getDatabase(application, viewModelScope).profileDao()
+            repository = ProfileRepository(profilesDao)
+            allProfiles = repository.allProfiles().asLiveData()
+        }
     }
 
     /**
