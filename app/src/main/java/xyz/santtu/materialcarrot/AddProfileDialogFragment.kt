@@ -15,18 +15,12 @@ import xyz.santtu.materialcarrotrepository.ProfileViewModel
 import xyz.santtu.materialcarrotutils.formatAddHexReadability
 import xyz.santtu.materialcarrotutils.toHex
 
-
+// TODO: Should be merged with [ImportProfileDialogFragment]
 class AddProfileDialogFragment: AppCompatDialogFragment(){
     private val ownModel: AddProfileFragmentViewModel by activityViewModels()
     private val profileModel: ProfileViewModel by activityViewModels()
     private var _binding: AddProfileBinding? = null
     private val dialogBinding get() = _binding!!
-    internal var callback: SetOnPositiveListener? = null
-
-    fun interface SetOnPositiveListener {
-        fun onAddProfile(name:String, secret: ByteArray)
-    }
-
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 

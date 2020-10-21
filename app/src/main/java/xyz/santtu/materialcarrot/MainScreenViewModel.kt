@@ -29,7 +29,7 @@ class MainScreenViewModel(application: Application) : AndroidViewModel(
 
         val mainState = repository.MainStateFlow.asLiveData(viewModelScope.coroutineContext + Dispatchers.IO)
 
-        fun getOnetimePassword(): LiveData<String> = repository.passwordFlow.asLiveData(viewModelScope.coroutineContext + Dispatchers.IO)
+        val onetimePassword: LiveData<String> = repository.passwordFlow.asLiveData(viewModelScope.coroutineContext + Dispatchers.IO)
         fun setOnetimePassword(value: String) = viewModelScope.launch(Dispatchers.IO){
             repository.updatePassword(value)
         }
@@ -40,7 +40,7 @@ class MainScreenViewModel(application: Application) : AndroidViewModel(
         }
 
 //    var countdownStart: MutableLiveData<Long>
-        fun getCountdownStart(): LiveData<Long> = repository.countdownStartFlow.asLiveData(viewModelScope.coroutineContext + Dispatchers.IO)
+        val countdownStart: LiveData<Long> = repository.countdownStartFlow.asLiveData(viewModelScope.coroutineContext + Dispatchers.IO)
         fun setCountdownStart(value: Long)= viewModelScope.launch(Dispatchers.IO){
             repository.updateCountdownStart(value)
         }

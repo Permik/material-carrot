@@ -6,20 +6,18 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatDialogFragment
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.santtu.materialcarrot.databinding.ImportProfileBinding
+import xyz.santtu.materialcarrotrepository.Profile
+import xyz.santtu.materialcarrotrepository.ProfileViewModel
 import xyz.santtu.materialcarrotutils.hexStringToByteArray
 
 
 class ImportProfileDialogFragment(): AppCompatDialogFragment(){
     private var _binding: ImportProfileBinding? = null
+    private val profileModel: ProfileViewModel by activityViewModels()
     private val dialogBinding get() = _binding!!
-    internal var callback: SetOnPositiveListener? = null
-
-    fun interface SetOnPositiveListener {
-        fun onAddProfile(name:String, secret: ByteArray)
-    }
-
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
@@ -33,10 +31,11 @@ class ImportProfileDialogFragment(): AppCompatDialogFragment(){
                 .setTitle(getString(R.string.title_activity_import_profile))
                 .setPositiveButton(R.string.profile_import) { _, _ ->
                     run {
-                            callback?.onAddProfile(
+                            profileModel.delete(Profile(
+                                0,
                                 dialogBinding.profileEnterName.editText?.text.toString(),
                                 dialogBinding.profileImportSecret.editText?.text.toString().hexStringToByteArray()
-                            )
+                            ))
                     }
                 }
                 .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog?.cancel() }

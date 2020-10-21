@@ -26,35 +26,27 @@ import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
-import android.text.util.Linkify
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import xyz.santtu.materialcarrot.databinding.ActivityMainBinding
 import xyz.santtu.materialcarrot.databinding.CodeGenerationBinding
-import xyz.santtu.materialcarrot.databinding.ImportProfileBinding
 import xyz.santtu.materialcarrotrepository.Profile
 import xyz.santtu.materialcarrotrepository.ProfileViewModel
 import xyz.santtu.materialcarrotutils.generateOtp
 import xyz.santtu.materialcarrotutils.toHex
 import java.time.Instant
-import kotlin.properties.Delegates
 
 
 // TODO: Add change all dialogs to fragment dialogs to preserve their states on rotate.
@@ -84,12 +76,12 @@ class CodeFragment : Fragment() {
         val binding = _binding!!
 
         model.setup()
-        model.getOnetimePassword().observe(viewLifecycleOwner, { password -> binding.otpView.text = password })
+        model.onetimePassword.observe(viewLifecycleOwner, { password -> binding.otpView.text = password })
         model.utcOffset.observe(viewLifecycleOwner, { utcOffset -> binding.utcView.text = utcOffset })
         model.selectedProfile.observe(viewLifecycleOwner, { profSelected -> profileSelected = profSelected
             Log.i("profSel", profileSelected.toString())
         })
-        model.getCountdownStart().observe(viewLifecycleOwner, { timeStart ->
+        model.countdownStart.observe(viewLifecycleOwner, { timeStart ->
             timeCountDownStart = timeStart
             Log.i("cdStart", timeStart.toString())
             if (timeStart != 0L && timeStart+60000 > Instant.now().toEpochMilli()) {
