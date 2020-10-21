@@ -16,7 +16,7 @@
  * @author      Markus Berg <markus @ kelvin.nu>
  * @version     1.1
  * @since       2012-10-18
-</markus> */
+ */
 package xyz.santtu.materialcarrot
 
 import android.os.Bundle
