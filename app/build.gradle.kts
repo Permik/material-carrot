@@ -64,13 +64,13 @@ dependencies {
 
     implementation("androidx.collection:collection-ktx:1.1.0")
 
-    implementation("androidx.datastore:datastore-preferences:1.0.0-alpha01")
+    implementation("androidx.datastore:datastore-preferences:1.0.0-alpha02")
 
     implementation("androidx.fragment:fragment-ktx:1.3.0-beta01")
 
-    implementation("androidx.room:room-runtime:2.3.0-alpha02")
-    implementation("androidx.room:room-ktx:2.3.0-alpha02")
-    kapt("androidx.room:room-compiler:2.3.0-alpha02")
+    implementation("androidx.room:room-runtime:2.3.0-alpha03")
+    implementation("androidx.room:room-ktx:2.3.0-alpha03")
+    kapt("androidx.room:room-compiler:2.3.0-alpha03")
 
     implementation("androidx.lifecycle:lifecycle-livedata-core-ktx:2.3.0-beta01")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-beta01")
@@ -78,10 +78,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.0-beta01")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-beta01")
 
-    implementation("androidx.navigation:navigation-ui-ktx:2.3.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.3.0")
+    implementation("androidx.navigation:navigation-ui-ktx:2.3.1")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.3.1")
 
-    implementation("androidx.constraintlayout:constraintlayout:2.0.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.2")
 
     implementation("com.google.android.material:material:1.2.1")
 
@@ -103,7 +103,7 @@ dependencies {
     androidTestImplementation ("com.google.truth:truth:1.0.1")
     androidTestImplementation("com.google.truth.extensions:truth-java8-extension:1.0.1")
 
-    androidTestImplementation("androidx.room:room-testing:2.3.0-alpha02")
+    androidTestImplementation("androidx.room:room-testing:2.3.0-alpha03")
 }
 
 tasks.dokkaHtml.configure {
