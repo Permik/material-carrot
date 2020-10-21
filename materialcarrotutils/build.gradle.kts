@@ -1,3 +1,8 @@
+buildscript {
+    dependencies{
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.4.10.2")
+    }
+}
 
 plugins{
     id("com.android.library")

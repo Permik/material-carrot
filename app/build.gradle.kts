@@ -1,6 +1,6 @@
 buildscript {
     dependencies{
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.4.10")
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.4.10.2")
     }
 }
 
