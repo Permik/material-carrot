@@ -1,10 +1,15 @@
+buildscript {
+    dependencies{
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.4.10.2")
+    }
+}
 
 plugins{
     id("com.android.application")
     kotlin("android")
     kotlin("android.extensions")
     kotlin("kapt")
-    id("org.jetbrains.dokka") version "1.4.0-rc"
+    id("org.jetbrains.dokka") version "1.4.10"
 }
 
 android {
@@ -24,6 +29,9 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
         }
     }
     buildFeatures{
@@ -58,12 +66,14 @@ dependencies {
     implementation("androidx.fragment:fragment:1.3.0-beta01")
     implementation("androidx.fragment:fragment-ktx:1.3.0-beta01")
 
+    implementation("androidx.recyclerview:recyclerview:1.2.0-alpha06")
+
     implementation("com.google.android.support:wearable:2.8.1")
 
-    implementation("androidx.wear:wear:1.0.0")
+    implementation("androidx.wear:wear:1.1.0")
     implementation("com.google.android.material:material:1.2.1")
     
-    testImplementation("junit:junit:4.13")
+    testImplementation("junit:junit:4.13.1")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.0.10")
 
@@ -73,6 +83,10 @@ dependencies {
     compileOnly("com.google.android.wearable:wearable:2.8.1")
 }
 
-tasks.dokkaHtml {
-    outputDirectory = "$buildDir/dokka"
+tasks.dokkaHtml.configure {
+    dokkaSourceSets {
+        named("main") {
+            noAndroidSdkLink.set(false)
+        }
+    }
 }

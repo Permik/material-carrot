@@ -88,7 +88,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
 
-    testImplementation("junit:junit:4.13")
+    testImplementation("junit:junit:4.13.1")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.0.10")
 
@@ -100,8 +100,8 @@ dependencies {
 
     androidTestImplementation("androidx.test.ext:junit:1.1.2")
     androidTestImplementation ("androidx.test.ext:truth:1.3.0")
-    androidTestImplementation ("com.google.truth:truth:1.0.1")
-    androidTestImplementation("com.google.truth.extensions:truth-java8-extension:1.0.1")
+    androidTestImplementation ("com.google.truth:truth:1.1")
+    androidTestImplementation("com.google.truth.extensions:truth-java8-extension:1.1")
 
     androidTestImplementation("androidx.room:room-testing:2.3.0-alpha03")
 }
