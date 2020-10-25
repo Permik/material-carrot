@@ -84,7 +84,7 @@ class CodeFragment : Fragment() {
         model.countdownStart.observe(viewLifecycleOwner, { timeStart ->
             timeCountDownStart = timeStart
             Log.i("cdStart", timeStart.toString())
-            if (timeStart != 0L && timeStart+60000 > Instant.now().toEpochMilli()) {
+            if (timeStart != 0L && (timeStart+60000) > Instant.now().toEpochMilli()) {
                 timeCountDownStart = countDownStart(timeStart, binding)
                 binding.otpView.visibility = View.VISIBLE
             }
@@ -115,8 +115,7 @@ class CodeFragment : Fragment() {
                     toHex(allProfiles[profileSelected].profileSecret)
                 )
             )
-            model.setCountdownStart(countDownStart(0, binding))
-            model.setCountdownStart(countDownStart(timeCountDownStart, binding))
+            model.setCountdownStart(Instant.now().toEpochMilli())
             binding.otpView.visibility = View.VISIBLE
         }
         binding.otpView.setOnClickListener { otpView -> copyToClipboard(otpView as TextView?) }
@@ -142,7 +141,6 @@ class CodeFragment : Fragment() {
                         )
                     )
                     model.setCountdownStart(Instant.now().toEpochMilli())
-                    binding.otpView.visibility = View.VISIBLE
                     false
                 } else {
                     Toast.makeText(
