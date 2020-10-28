@@ -23,7 +23,7 @@ android {
             storeFile = file(gradleLocalProperties(project.rootDir).getProperty("storeFile"))
             storePassword = gradleLocalProperties(project.rootDir).getProperty("storePassword")
             keyAlias = gradleLocalProperties(project.rootDir).getProperty("keyAlias")
-            keyPassword = gradleLocalProperties(project.rootDir).getProperty("storePassword")
+            keyPassword = gradleLocalProperties(project.rootDir).getProperty("keyPassword")
         }
     }
     compileSdkVersion(30)
@@ -96,7 +96,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.3.1")
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.1")
 
-    implementation("androidx.constraintlayout:constraintlayout:2.0.2")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.3")
 
     implementation("com.google.android.material:material:1.2.1")
 
