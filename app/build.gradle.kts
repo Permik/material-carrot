@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 buildscript {
     dependencies{
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:1.4.10.2")
@@ -14,6 +16,16 @@ plugins{
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            enableV3Signing = true
+            enableV4Signing = true
+            storeFile = file(gradleLocalProperties(project.rootDir).getProperty("storeFile"))
+            storePassword = gradleLocalProperties(project.rootDir).getProperty("storePassword")
+            keyAlias = gradleLocalProperties(project.rootDir).getProperty("keyAlias")
+            keyPassword = gradleLocalProperties(project.rootDir).getProperty("storePassword")
+        }
+    }
     compileSdkVersion(30)
     buildToolsVersion = "30.0.2"
 
@@ -29,10 +41,13 @@ android {
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         getByName("debug") {
+            isMinifyEnabled = false
             applicationIdSuffix = ".debug"
         }
     }
