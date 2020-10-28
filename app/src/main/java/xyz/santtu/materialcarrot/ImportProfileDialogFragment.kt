@@ -31,7 +31,7 @@ class ImportProfileDialogFragment(): AppCompatDialogFragment(){
                 .setTitle(getString(R.string.title_activity_import_profile))
                 .setPositiveButton(R.string.profile_import) { _, _ ->
                     run {
-                            profileModel.delete(Profile(
+                            profileModel.insert(Profile(
                                 0,
                                 dialogBinding.profileEnterName.editText?.text.toString(),
                                 dialogBinding.profileImportSecret.editText?.text.toString().hexStringToByteArray()
