@@ -11,8 +11,15 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="xyz.santtu.materialcarrot.MainActivity"
+            android:resizeableActivity="true"
             android:windowSoftInputMode="adjustResize"
             android:label="@string/title_activity_main">
+            <layout
+                android:defaultHeight="500dp"
+                android:defaultWidth="336dp"
+                android:minHeight="464dp"
+                android:minWidth="264dp"
+                />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
