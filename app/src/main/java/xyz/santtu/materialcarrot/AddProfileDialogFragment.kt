@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -60,6 +60,7 @@ class AddProfileDialogFragment: AppCompatDialogFragment(){
         ownModel.getProfileSecret().observe(requireActivity(), { randomBytes ->
             dialogBinding.profileSecret.text = formatAddHexReadability(toHex(randomBytes))
         })
+        dialogBinding.profileSecret.setOnClickListener { secretView -> copyToClipboard(secretView as TextView?, requireActivity(), getString(R.string.secret_copy)) }
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 

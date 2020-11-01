@@ -12,7 +12,7 @@
     <string name="profile_enter_name">Profile name</string>
     <string name="profile_save">Save profile</string>
     <string name="title_activity_main2">MainActivity</string>
-    <string name="secret_here">Secret: \n</string>
+    <string name="secret_here">Secret:</string>
     <string name="profile_delete_confirm">Are you sure you want to delete this profile?</string>
     <string name="profile_delete">Delete profile</string>
     <string name="profile_delete_confirm_button">Delete</string>
@@ -21,5 +21,8 @@
     <string name="profile_import">Import profile</string>
     <string name="title_activity_import_profile">Import Profile</string>
     <string name="profile_enter_secret_hint">Allowed characters: \"0123456789abcdef\"</string>
+    <string name="otp_copy">One-time-password copied to clipboard</string>
+    <string name="pin_length_err">Pin needs to be 4 digits long!</string>
+    <string name="secret_copy">Secret copied to clipboard!</string>
 
 </resources>

@@ -1,9 +1,15 @@
 package xyz.santtu.materialcarrot
 
+import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.text.InputFilter
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextUtils
+import android.widget.TextView
+import android.widget.Toast
 import xyz.santtu.materialcarrotutils.isHex
 
 class HexInputFilter : InputFilter {
@@ -42,4 +48,20 @@ class HexInputFilter : InputFilter {
         return null
     }
 
+}
+
+/**
+ * Copy the current one-time-password to the clipboard. This is a callback
+ * for onclick on the password TextView.
+ *
+ * @param view
+ */
+fun copyToClipboard(view: TextView?, context: Activity, message: String = "Copied to clipboard") { // Gets a handle to the clipboard service.
+    val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+    val otpClip = ClipData.newPlainText("text", view?.text.toString())
+    cm?.primaryClip?.addItem(otpClip.getItemAt(0))
+    Toast.makeText(
+        context, message,
+        Toast.LENGTH_SHORT
+    ).show()
 }

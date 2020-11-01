@@ -19,10 +19,7 @@
 </markus> */
 package xyz.santtu.materialcarrot
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
-import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
@@ -118,7 +115,7 @@ class CodeFragment : Fragment() {
             model.setCountdownStart(Instant.now().toEpochMilli())
             binding.otpView.visibility = View.VISIBLE
         }
-        binding.otpView.setOnClickListener { otpView -> copyToClipboard(otpView as TextView?) }
+        binding.otpView.setOnClickListener { otpView -> copyToClipboard(otpView as TextView?, requireActivity(), getString(R.string.otp_copy)) }
         binding.enterPin.editText?.let {
             it.doOnTextChanged(action = { text, _, _, _ ->
                 if (text?.length == 4) {
@@ -145,7 +142,7 @@ class CodeFragment : Fragment() {
                 } else {
                     Toast.makeText(
                         context,
-                        "Pin needs to be 4 digits long!",
+                        getString(R.string.pin_length_err),
                         Toast.LENGTH_LONG
                     ).show()
                     true
@@ -235,21 +232,6 @@ class CodeFragment : Fragment() {
         }
     }
 
-    /**
-     * Copy the current one-time-password to the clipboard. This is a callback
-     * for onclick on the password TextView.
-     *
-     * @param view
-     */
-    fun copyToClipboard(view: TextView?) { // Gets a handle to the clipboard service.
-        val cm = requireActivity().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
-        val otpClip = ClipData.newPlainText("text", view?.text.toString())
-        cm?.primaryClip?.addItem(otpClip.getItemAt(0))
-        Toast.makeText(
-            requireActivity(), "One-time-password copied to clipboard",
-            Toast.LENGTH_SHORT
-        ).show()
-    }
 
     /**
      * Start the countdown timer after the otp has been generated. When the
