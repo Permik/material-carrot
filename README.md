@@ -4,6 +4,7 @@ You can find the original project here: https://github.com/markusberg/potato_cli
 
 ## Downloads
 Google Play Store: https://play.google.com/store/apps/details?id=xyz.santtu.materialcarrot
+
 Github releases *coming soon*™...
 
 ## Credits
