@@ -5,28 +5,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import xyz.santtu.materialcarrot.databinding.AddProfileBinding
+import xyz.santtu.materialcarrot.databinding.ProfileEntryBinding
 import xyz.santtu.materialcarrotrepository.Profile
 import xyz.santtu.materialcarrotrepository.ProfileViewModel
 import xyz.santtu.materialcarrotutils.formatAddHexReadability
 import xyz.santtu.materialcarrotutils.toHex
 
-// TODO: Should be merged with [ImportProfileDialogFragment]
-class AddProfileDialogFragment: AppCompatDialogFragment(){
+class ProfileEntryDialogFragment: AppCompatDialogFragment() {
     private val ownModel: AddProfileFragmentViewModel by activityViewModels()
     private val profileModel: ProfileViewModel by activityViewModels()
-    private var _binding: AddProfileBinding? = null
+    private var _binding: ProfileEntryBinding? = null
     private val dialogBinding get() = _binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         return activity?.let {
             //Setting up view
-            _binding = AddProfileBinding.inflate(requireActivity().layoutInflater)
+            _binding = ProfileEntryBinding.inflate(requireActivity().layoutInflater)
             val view = dialogBinding.root
 
             //setting ui up
