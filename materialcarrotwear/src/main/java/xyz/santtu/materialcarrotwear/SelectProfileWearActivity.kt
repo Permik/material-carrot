@@ -25,6 +25,7 @@ class SelectProfileWearActivity() : FragmentActivity(), AmbientModeSupport.Ambie
         profileModel.allProfiles.observe(this, {
                 profileList -> allProfiles = profileList
         })
+        profileModel.insert(Profile(0,"Jekkuprofiili", "0123456789abcdef".toByteArray()))
         viewManager = LinearLayoutManager(this)
         viewAdapter = ProfileAdapter(allProfiles)
         recyclerView.apply {
@@ -32,6 +33,7 @@ class SelectProfileWearActivity() : FragmentActivity(), AmbientModeSupport.Ambie
             layoutManager = viewManager
             adapter = viewAdapter
         }
+        recyclerView.adapter?.notifyDataSetChanged()
     }
 
     override fun getAmbientCallback(): AmbientModeSupport.AmbientCallback {

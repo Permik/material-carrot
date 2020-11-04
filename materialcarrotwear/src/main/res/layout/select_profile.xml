@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/box_inset_layout_padding"
     android:scrollbars="vertical"
-    android:theme="@style/AppTheme"
     android:id="@+id/recycler_profile_select"
-    tools:context=".MainWearActivity"
+    tools:context=".SelectProfileWearActivity"
     tools:deviceIds="wear">
 
 </androidx.wear.widget.WearableRecyclerView>

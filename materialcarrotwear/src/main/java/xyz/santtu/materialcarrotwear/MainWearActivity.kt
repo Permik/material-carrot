@@ -12,10 +12,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
 import androidx.wear.ambient.AmbientModeSupport
 import xyz.santtu.materialcarrotwear.WearConst.ACTIVE_INTERVAL_MS
 import xyz.santtu.materialcarrotwear.WearConst.AMBIENT_INTERVAL_MS
@@ -29,7 +30,7 @@ import kotlin.time.ExperimentalTime
 const val MSG_UPDATE_SCREEN = 0
 
 @ExperimentalTime
-class MainWearActivity : FragmentActivity(), AmbientModeSupport.AmbientCallbackProvider{
+class MainWearActivity : AppCompatActivity(), AmbientModeSupport.AmbientCallbackProvider, MenuItem.OnMenuItemClickListener{
 
 
 
@@ -73,6 +74,11 @@ class MainWearActivity : FragmentActivity(), AmbientModeSupport.AmbientCallbackP
 
         binding.pinButton.setOnClickListener {pin.launch(this)}
 
+        //binding.profileButton.setOnClickListener { startActivity(Intent(this, SelectProfileWearActivity::class.java)) }
+
+        binding.bottomActionDrawer.controller.peekDrawer()
+        binding.bottomActionDrawer.setOnMenuItemClickListener(this)
+
         // Enables Always-on
         ambientController = AmbientModeSupport.attach(this)
         ambientUpdateAlarmManager = ContextCompat.getSystemService(this, AlarmManager::class.java)!!
@@ -88,6 +94,21 @@ class MainWearActivity : FragmentActivity(), AmbientModeSupport.AmbientCallbackP
 
         }
 
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.action_add -> {
+                true
+            }
+            R.id.action_import -> {
+                true
+            }
+            R.id.action_delete -> {
+                true
+            }
+            else -> true
+        }
     }
 
     override fun onResume() {

@@ -3,6 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainWearActivity"
+    tools:deviceIds="wear"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,10 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="10dp"
-        android:theme="@style/AppTheme"
-        app:boxedEdges="all"
-        tools:context=".MainWearActivity"
-        tools:deviceIds="wear">
+        app:boxedEdges="all">
         <androidx.wear.widget.CircularProgressLayout
             android:id="@+id/progress_circular"
             android:layout_width="match_parent"
@@ -55,11 +54,11 @@
         </androidx.wear.widget.CircularProgressLayout>
 
     </androidx.wear.widget.BoxInsetLayout>
-    <androidx.wear.widget.drawer.WearableNavigationDrawerView
-        android:id="@+id/top_navigation_drawer"
+    <androidx.wear.widget.drawer.WearableActionDrawerView
+        android:id="@+id/bottom_action_drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/grey"
-        app:navigationStyle="multiPage" />
+        android:background="@color/colorPrimary"
+        app:actionMenu="@menu/action_drawer_menu" />
 
 </androidx.wear.widget.drawer.WearableDrawerLayout>

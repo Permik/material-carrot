@@ -6,4 +6,7 @@
     -->
     <string name="hello_world">Hello Square World!</string>
     <string name="enter_pin">Enter pin</string>
+    <string name="menu_profile_add">Add profile</string>
+    <string name="menu_profile_delete">Delete profile</string>
+    <string name="menu_profile_import">Import profile</string>
 </resources>
